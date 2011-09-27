@@ -1,6 +1,9 @@
 #ifndef _PARTITION_DANGLE_H
 #define _PARTITION_DANGLE_H
 
+
+#include <math.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -19,6 +22,7 @@ extern	double ** u1;
 extern int part_len;
 
 void calculate_partition(int len);
+void free_partition();
 
 #ifdef __cplusplus
 }
