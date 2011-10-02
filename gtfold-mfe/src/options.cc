@@ -19,6 +19,7 @@ bool UNAMODE = false;
 bool RNAMODE = false;
 bool b_prefilter = false;
 bool CALC_PART_FUNC = false;
+bool RND_SAMPLE = false;
 
 string seqfile = "";
 string constraintsFile = "";
@@ -30,6 +31,7 @@ string outputDir = "";
 string shapeFile = "";
 string paramDir; // default value
 
+int num_rnd = 0;
 int dangles=-1;
 int prefilter1=2;
 int prefilter2=2;
@@ -184,6 +186,12 @@ void parse_options(int argc, char** argv) {
           help();
       } else if (strcmp(argv[i],"--partition") == 0) {
         CALC_PART_FUNC = true;
+      } else if (strcmp(argv[i],"--sample") == 0) {
+        RND_SAMPLE = true;
+        if(i < argc)
+          num_rnd = atoi(argv[++i]);
+        else
+          help();
       }
       else if (strcmp(argv[i], "--useSHAPE") == 0){
         if( i < argc){

@@ -23,6 +23,7 @@ extern bool T_MISMATCH;
 extern bool UNAMODE;
 extern bool RNAMODE;
 extern bool CALC_PART_FUNC;
+extern bool RND_SAMPLE;
 
 extern string seqfile;
 extern string constraintsFile;
@@ -39,6 +40,7 @@ extern bool b_prefilter;
 extern int prefilter1;
 extern int prefilter2;
 extern int dangles;
+extern int num_rnd;
 
 extern bool LIMIT_DISTANCE;
 extern int contactDistance;

@@ -62,7 +62,6 @@ static void calc_u1d(int i, int j);
 static void calc_s1(int i, int j);
 static void calc_s2(int i, int j);
 static void calc_s3(int i, int j);
-static double f(int j, int h, int l);
 
 static double get_u(int i, int j);
 static double get_ud(int i, int j);
@@ -174,7 +173,7 @@ void calculate_partition(int len)
 
   fill_partition_arrays();
 
-  printAllMatrixes();
+  //printAllMatrixes();
 
   printf("%4.4f\n",u[1][part_len]);
 }

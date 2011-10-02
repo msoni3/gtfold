@@ -21,6 +21,7 @@ extern	double ** u1;
 
 extern int part_len;
 
+double f(int j, int h, int l);
 void calculate_partition(int len);
 void free_partition();
 
