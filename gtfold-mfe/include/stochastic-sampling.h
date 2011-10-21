@@ -67,7 +67,7 @@ struct base_pair
 
   friend std::ostream& operator << (std::ostream& out, const base_pair& bp)
   {
-    out << '(' << bp.i << '-' << bp.j << ')' << ' ' << bp.isPaired() << std::endl;
+    out << '(' << bp.i << '-' << bp.j << ')' << ' ' << bp.t << std::endl;
     return out;
   }
 };
@@ -76,12 +76,12 @@ void set_single_stranded(int i, int j, int* structure);
 void set_base_pair(int i, int j, int* structure);
 
 void rnd_upm(int i, int j, int* structure);
-void rnd_u1d(int i, int j, int* structure);
+void rnd_u1d(int i, int j, int* structure) ;
 void  rnd_u1(int i, int j, int* structure);
 void  rnd_up(int i, int j, int* structure);
 void  rnd_ud(int i, int j, int* structure);
 void   rnd_u(int i, int j, int* structure);
 
-void rnd_structure(int* structure, int len);
+double rnd_structure(int* structure, int len);
 
 #endif
