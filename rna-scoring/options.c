@@ -9,8 +9,8 @@ int NODANGLEMODE=0;//no dangling at all means d0
 int D2MODE=0;//d2 mode
 int DEFAULTMODE=1;//default mode
 
-char* seqfile;
-char* paramDir="";
+char seqfile[200];
+char paramDir[200] = {'\0'};
 
 /**
  * Print the help message and quit.
@@ -55,13 +55,13 @@ void parse_options(int argc, char** argv) {
 	else if(strcmp(argv[i], "--param-dir")==0){
 	 if(i<argc){
 	  i++;
-	  paramDir=argv[i];
+	  strcpy(paramDir, argv[i]);
 	 }
 	 else help();
 	}
     }
     else {
-      seqfile = argv[i];
+      strcpy(seqfile, argv[i]);
     }
 
   }

@@ -48,7 +48,8 @@ double getScore(string seqfilepath, int pfmode, int nodanglemode, int d2mode, in
 	DEFAULTMODE=defaultmode;
 
 	char seqfileTmp[1000];strcpy(seqfileTmp, seqfilepath.c_str());
-        seqfile = seqfileTmp;printf("Inside getScore() function: seqfile=%s\n",seqfile);
+    strcpy(seqfile,seqfileTmp);
+	printf("Inside getScore() function: seqfile=%s\n",seqfile);
 	char bases[16] = {0, 'A', 'C', 'M', 'G', 'R', 'S', 'V', 'U',
                       'W', 'Y', 'H', 'K', 'D', 'B', 'N'};
     ResultBundle* resultBundle = CreateFromFile(seqfile);
