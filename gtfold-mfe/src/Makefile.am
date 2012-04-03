@@ -25,7 +25,9 @@ gtfold_SOURCES = \
 	partition-dangle.c\
 	partition-func.c\
 	partition-func-d2.cc\
-	shapereader.cc
+	shapereader.cc\
+	pf-shel-check.cc\
+	key.cc
 
 gtfold_LDFLAGS = 
 
