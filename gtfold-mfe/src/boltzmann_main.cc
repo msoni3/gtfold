@@ -61,6 +61,8 @@ static int dangles=2;//making dangle default value as 2
 static bool LIMIT_DISTANCE = false;
 static int contactDistance = -1;
 
+static void printRunConfiguration(string seq);
+
 
 static void print_usage() {
 	printf("Usage: gtboltzmann [OPTION]... FILE\n\n");
@@ -148,6 +150,45 @@ static void detailed_help(){
 	exit(-1);
 }
 
+static void printRunConfiguration(string seq) {
+
+        if(!SILENT) printf("\nRun Configuration:\n");
+
+	if (PF_COUNT_MODE == true) {
+                if(!SILENT) printf("+ running with --pfcount option\n");
+        }
+        if (BPP_ENABLED == true) {
+                if(!SILENT) printf("+ running with --bpp option\n");
+        }
+        if(dangles==0 && !PF_COUNT_MODE){//if (CALC_PF_DO && !CALC_PF_DS && !CALC_PF_D2 && !PF_COUNT_MODE) {
+                if(!SILENT) printf("+ running in dangle d0 mode\n");
+        }
+        if(dangles==-1 && CALC_PF_DS){//if (!CALC_PF_DO && CALC_PF_DS && !CALC_PF_D2) {
+                if(!SILENT) printf("+ running in dangle dS mode\n");
+        }
+        if(dangles==2 && !PF_COUNT_MODE){//if (!CALC_PF_DO && !CALC_PF_DS && CALC_PF_D2) {
+                if(!SILENT) printf("- running in dangle d2 mode\n");
+        }
+        if (PARAM_DIR == true) {
+                if(!SILENT) printf("+ running with customized param dir: %s\n",paramDir.c_str());
+        }
+        if (RND_SAMPLE == true) {
+                if(!SILENT) printf("- running to calculate %d samples\n", num_rnd);
+        }
+        if (contactDistance != -1) {
+                if(!SILENT) printf("- maximum contact distance: %d\n", contactDistance);
+        }
+        if(!SILENT) printf("- thermodynamic parameters: %s\n", EN_DATADIR.c_str());
+        if(!SILENT) printf("- input sequence file: %s\n", seqfile.c_str());
+        if(!SILENT) printf("- sequence length: %d\n", (int)seq.length());
+        //if(!SILENT) printf("- output file: %s\n", outputFile.c_str());
+        if(RND_SAMPLE) if(!SILENT) printf("- samples output file: %s\n", sampleOutFile.c_str());
+        if(BPP_ENABLED) if(!SILENT) printf("- bpp output file: %s\n", bppOutFile.c_str());
+        if(print_energy_decompose==1) if(!SILENT) printf("- energy decompose output file: %s\n", energyDecomposeOutFile.c_str());
+
+	printf("\n");
+}
+
 static void validate_options(string seq){
         if(!SILENT) printf("\nValidating Options:\n");
 	if(PF_COUNT_MODE){
@@ -194,39 +235,6 @@ static void validate_options(string seq){
 		help();
         	exit(-1);	
         }
-
-
-	if (PF_COUNT_MODE == true) {
-                if(!SILENT) printf("+ running with --pfcount option\n");
-        }
-        if (BPP_ENABLED == true) {
-                if(!SILENT) printf("+ running with --bpp option\n");
-        }
-        if(dangles==0 && !PF_COUNT_MODE){//if (CALC_PF_DO && !CALC_PF_DS && !CALC_PF_D2 && !PF_COUNT_MODE) {
-                if(!SILENT) printf("+ running in dangle d0 mode\n");
-        }
-        if(dangles==-1 && CALC_PF_DS){//if (!CALC_PF_DO && CALC_PF_DS && !CALC_PF_D2) {
-                if(!SILENT) printf("+ running in dangle dS mode\n");
-        }
-        if(dangles==2 && !PF_COUNT_MODE){//if (!CALC_PF_DO && !CALC_PF_DS && CALC_PF_D2) {
-                if(!SILENT) printf("- running in dangle d2 mode\n");
-        }
-        //if (PARAM_DIR == true) {
-          //      if(!SILENT) printf("+ running with customized param dir: %s\n",paramDir.c_str());
-        //}
-        if (RND_SAMPLE == true) {
-                if(!SILENT) printf("- running to calculate %d samples\n", num_rnd);
-        }
-        if (contactDistance != -1) {
-                if(!SILENT) printf("- maximum contact distance: %d\n", contactDistance);
-        }
-        if(!SILENT) printf("- thermodynamic parameters: %s\n", EN_DATADIR.c_str());
-        if(!SILENT) printf("- input sequence file: %s\n", seqfile.c_str());
-        if(!SILENT) printf("- sequence length: %d\n", (int)seq.length());
-        //if(!SILENT) printf("- output file: %s\n", outputFile.c_str());
-        if(RND_SAMPLE) if(!SILENT) printf("- samples output file: %s\n", sampleOutFile.c_str());
-        if(BPP_ENABLED) if(!SILENT) printf("- bpp output file: %s\n", bppOutFile.c_str());
-        if(print_energy_decompose==1) if(!SILENT) printf("- energy decompose output file: %s\n", energyDecomposeOutFile.c_str());
 
 	printf("\n");
 }
@@ -434,6 +442,7 @@ int boltzmann_main(int argc, char** argv) {
 	g_contactDistance = contactDistance;
 
 	readThermodynamicParameters(paramDir.c_str(), PARAM_DIR, 0, 0, 0);
+	printRunConfiguration(seqfile);
 	
 	if (LIMIT_DISTANCE) {
 		if (strlen(seq.c_str()) < contactDistance) 
