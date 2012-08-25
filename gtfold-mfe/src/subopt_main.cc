@@ -66,6 +66,11 @@ void parse_options(int argc, char** argv) {
         else {
           help();
         }
+      } else if (strcmp(argv[i], "--workdir") == 0 || strcmp(argv[i], "-w") == 0) {
+        if(i < argc)
+          outputDir = argv[++i];
+        else
+          help();
       }
       else if(strcmp(argv[i], "--delta") == 0) {
         g_dangles = 2;
