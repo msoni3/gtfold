@@ -20,6 +20,8 @@ class PartitionFunctionD2{
 		MyDouble ** s2;
 		MyDouble ** s3;
 		MyDouble ** u1;
+		//partition function scaling parameters
+		double M_RT;//M_RT = M=(scaleFactor*mfe)/(RT*L), hence M_RT=M*RT=scaleFactor*mfe/L;
 		//Different Modes and other variables
 		int part_len;
 		int PF_COUNT_MODE_;
@@ -75,8 +77,9 @@ class PartitionFunctionD2{
 		MyDouble get_s1(int i, int j);
 		MyDouble get_s2(int i, int j);
 		MyDouble get_s3(int i, int j);
+		double get_M_RT();
 		//Functions to calculate partition, and other partition function related utilities exposed to outside world
-		MyDouble calculate_partition(int len, int pf_count_mode, int no_dangle_mode, bool PF_D2_UP_APPROX_ENABLED);
+		MyDouble calculate_partition(int len, int pf_count_mode, int no_dangle_mode, bool PF_D2_UP_APPROX_ENABLED, double scaleFactor);
 		void free_partition();
 		void printAllMatrixes();
 		void printAllMatrixesToFile(string pfArraysOutputFile);
