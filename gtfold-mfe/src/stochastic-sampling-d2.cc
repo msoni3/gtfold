@@ -14,7 +14,7 @@
 #include<unistd.h>
 
 //Basic utility functions
-void StochasticTracebackD2::initialize(int length1, int PF_COUNT_MODE1, int NO_DANGLE_MODE1, int print_energy_decompose1, bool PF_D2_UP_APPROX_ENABLED1, bool checkFraction1, string energy_decompose_output_file){
+void StochasticTracebackD2::initialize(int length1, int PF_COUNT_MODE1, int NO_DANGLE_MODE1, int print_energy_decompose1, bool PF_D2_UP_APPROX_ENABLED1, bool checkFraction1, string energy_decompose_output_file, double scaleFactor){
 	checkFraction = checkFraction1;
 	length = length1;
 	//if(checkFraction) fraction = pf_shel_check(length);
@@ -35,7 +35,7 @@ void StochasticTracebackD2::initialize(int length1, int PF_COUNT_MODE1, int NO_D
 	PF_COUNT_MODE = PF_COUNT_MODE1;
 	NO_DANGLE_MODE = NO_DANGLE_MODE1;
 	PF_D2_UP_APPROX_ENABLED = PF_D2_UP_APPROX_ENABLED1;
-	pf_d2.calculate_partition(length,PF_COUNT_MODE,NO_DANGLE_MODE, PF_D2_UP_APPROX_ENABLED);
+	pf_d2.calculate_partition(length,PF_COUNT_MODE,NO_DANGLE_MODE, PF_D2_UP_APPROX_ENABLED, scaleFactor);
 }
 
 void StochasticTracebackD2::free_traceback(){
@@ -58,58 +58,71 @@ bool StochasticTracebackD2::feasible(int i, int j)
 
 //Probability calculation functions
 MyDouble StochasticTracebackD2::U_0(int i, int j){
-	return (MyDouble(1.0))/pf_d2.get_u(i,j);
+	//return (MyDouble(1.0))/pf_d2.get_u(i,j);
+	return pf_d2.myExp( pf_d2.get_M_RT()*(j-i+1) / RT) /pf_d2.get_u(i,j);
 }
 
 MyDouble StochasticTracebackD2::U_ihj(int i, int h, int j){
-	return (feasible(h,j) == true) ? (pf_d2.get_up(h,j)) * (pf_d2.myExp(-((pf_d2.ED5_new(h,j,h-1))+(pf_d2.ED3_new(h,j,j+1))+(pf_d2.auPenalty_new(h,j)))/RT)) / (pf_d2.get_u(i,j)) : MyDouble(0.0);
+	//return (feasible(h,j) == true) ? (pf_d2.get_up(h,j)) * (pf_d2.myExp(-((pf_d2.ED5_new(h,j,h-1))+(pf_d2.ED3_new(h,j,j+1))+(pf_d2.auPenalty_new(h,j)))/RT)) / (pf_d2.get_u(i,j)) : MyDouble(0.0);
+	return (feasible(h,j) == true) ? (pf_d2.get_up(h,j)) * (pf_d2.myExp(-((pf_d2.ED5_new(h,j,h-1))+(pf_d2.ED3_new(h,j,j+1))+(pf_d2.auPenalty_new(h,j))-pf_d2.get_M_RT()*(h-i))/RT)) / (pf_d2.get_u(i,j)) : MyDouble(0.0);
 }
 
 MyDouble StochasticTracebackD2::U_s1_ihj(int i, int h, int j){
-	return (pf_d2.get_s1(h,j)) / (pf_d2.get_u(i,j));
+	//return (pf_d2.get_s1(h,j)) / (pf_d2.get_u(i,j));
+	return (pf_d2.get_s1(h,j)) * (pf_d2.myExp(pf_d2.get_M_RT()*(h-i)/RT)) / (pf_d2.get_u(i,j));
 }
 
 MyDouble StochasticTracebackD2::S1_ihlj(int i, int h, int l, int j){
+	//return (feasible(h,l) == true) ? (pf_d2.get_up(h,l)) * (pf_d2.myExp(-((pf_d2.ED5_new(h,l,h-1))+(pf_d2.ED3_new(h,l,l+1))+(pf_d2.auPenalty_new(h,l)))/RT)) * (pf_d2.get_u(l+1,j)) / (pf_d2.get_s1(h,j)) : MyDouble(0.0);
 	return (feasible(h,l) == true) ? (pf_d2.get_up(h,l)) * (pf_d2.myExp(-((pf_d2.ED5_new(h,l,h-1))+(pf_d2.ED3_new(h,l,l+1))+(pf_d2.auPenalty_new(h,l)))/RT)) * (pf_d2.get_u(l+1,j)) / (pf_d2.get_s1(h,j)) : MyDouble(0.0);
 }
 
 MyDouble StochasticTracebackD2::Q_H_ij(int i, int j){
-	return (pf_d2.myExp(-(pf_d2.eH_new(i,j))/RT)) / (pf_d2.get_up(i,j));
+	//return (pf_d2.myExp(-(pf_d2.eH_new(i,j))/RT)) / (pf_d2.get_up(i,j));
+	return (pf_d2.myExp(-(pf_d2.eH_new(i,j)-pf_d2.get_M_RT()*(j-i+1))/RT)) / (pf_d2.get_up(i,j));
 }
 
 MyDouble StochasticTracebackD2::Q_S_ij(int i, int j){
-	return (pf_d2.myExp(-(pf_d2.eS_new(i,j))/RT)) * (pf_d2.get_up(i+1,j-1)) / (pf_d2.get_up(i,j));
+	//return (pf_d2.myExp(-(pf_d2.eS_new(i,j))/RT)) * (pf_d2.get_up(i+1,j-1)) / (pf_d2.get_up(i,j));
+	return (pf_d2.myExp(-(pf_d2.eS_new(i,j)-pf_d2.get_M_RT()*2)/RT)) * (pf_d2.get_up(i+1,j-1)) / (pf_d2.get_up(i,j));
 }
 
 MyDouble StochasticTracebackD2::Q_M_ij(int i, int j){
+	//return (pf_d2.get_upm(i,j)) / (pf_d2.get_up(i,j));
 	return (pf_d2.get_upm(i,j)) / (pf_d2.get_up(i,j));
 }
 
 MyDouble StochasticTracebackD2::Q_BI_ihlj(int i, int h, int l, int j){
-	return feasible(h,l) ? (pf_d2.myExp(-1*(pf_d2.eL_new(i,j,h,l))/RT)) * (pf_d2.get_up(h,l)) / (pf_d2.get_up(i,j)) : MyDouble(0.0);
+	//return feasible(h,l) ? (pf_d2.myExp(-1*(pf_d2.eL_new(i,j,h,l))/RT)) * (pf_d2.get_up(h,l)) / (pf_d2.get_up(i,j)) : MyDouble(0.0);
+	return feasible(h,l) ? (pf_d2.myExp(-1*(pf_d2.eL_new(i,j,h,l)-pf_d2.get_M_RT()*(h-i+j-l))/RT)) * (pf_d2.get_up(h,l)) / (pf_d2.get_up(i,j)) : MyDouble(0.0);
 }
 
 MyDouble StochasticTracebackD2::UPM_S2_ihj(int i, int h, int j){
-	return (pf_d2.get_s2(h,j)) * (pf_d2.myExp(-((pf_d2.EA_new())+ 2*(pf_d2.EC_new()) + (h-i-1)*(pf_d2.EB_new()) + (pf_d2.auPenalty_new(i,j)) + (pf_d2.ED5_new(j,i,j-1)) + (pf_d2.ED3_new(j,i,i+1)))/RT)) / (pf_d2.get_upm(i,j)); //TODO: Old impl, using ed3(j,i) instead of ed3(i,j), similarly in ed5
+	//return (pf_d2.get_s2(h,j)) * (pf_d2.myExp(-((pf_d2.EA_new())+ 2*(pf_d2.EC_new()) + (h-i-1)*(pf_d2.EB_new()) + (pf_d2.auPenalty_new(i,j)) + (pf_d2.ED5_new(j,i,j-1)) + (pf_d2.ED3_new(j,i,i+1)))/RT)) / (pf_d2.get_upm(i,j)); //TODO: Old impl, using ed3(j,i) instead of ed3(i,j), similarly in ed5
+	return (pf_d2.get_s2(h,j)) * (pf_d2.myExp(-((pf_d2.EA_new())+ 2*(pf_d2.EC_new()) + (h-i-1)*(pf_d2.EB_new()) + (pf_d2.auPenalty_new(i,j)) + (pf_d2.ED5_new(j,i,j-1)) + (pf_d2.ED3_new(j,i,i+1))-pf_d2.get_M_RT()*(h-i))/RT)) / (pf_d2.get_upm(i,j)); //TODO: Old impl, using ed3(j,i) instead of ed3(i,j), similarly in ed5
 	//return (pf_d2.get_s2(h,j)) * (pf_d2.myExp(-((pf_d2.EA_new())+ 2*(pf_d2.EC_new()) + (h-i-1)*(pf_d2.EB_new()) + (pf_d2.auPenalty_new(i,j)) + (pf_d2.ED5_new(i,j,j-1)) + (pf_d2.ED3_new(i,j,i+1)))/RT)) / (pf_d2.get_upm(i,j)); //TODO: New impl, using ed3(i,j) instead of ed3(j,i), similarly in ed5
 	//return exp((-1)*ED3_new(j,i,i+1)/RT)* (s2[h][j] * exp((-1)*(EA_new()+2*EC_new()+(h-i-1)*EB_new())/RT))/upm[i][j];//TODO: New impl
 }
 
 MyDouble StochasticTracebackD2::S2_ihlj(int i, int h, int l, int j){
-	return feasible(h,l) ? (pf_d2.get_up(h,l)) * (pf_d2.myExp(-((pf_d2.auPenalty_new(h,l)) + (pf_d2.ED5_new(h,l,h-1)) + (pf_d2.ED3_new(h,l,l+1)))/RT)) * (pf_d2.get_u1(l+1,j-1)) / pf_d2.get_s2(h,j) : MyDouble(0.0);
+	//return feasible(h,l) ? (pf_d2.get_up(h,l)) * (pf_d2.myExp(-((pf_d2.auPenalty_new(h,l)) + (pf_d2.ED5_new(h,l,h-1)) + (pf_d2.ED3_new(h,l,l+1)))/RT)) * (pf_d2.get_u1(l+1,j-1)) / pf_d2.get_s2(h,j) : MyDouble(0.0);
+	return feasible(h,l) ? (pf_d2.get_up(h,l)) * (pf_d2.myExp(-((pf_d2.auPenalty_new(h,l)) + (pf_d2.ED5_new(h,l,h-1)) + (pf_d2.ED3_new(h,l,l+1))-pf_d2.get_M_RT())/RT)) * (pf_d2.get_u1(l+1,j-1)) / pf_d2.get_s2(h,j) : MyDouble(0.0);
 }
 
 MyDouble StochasticTracebackD2::U1_s3_ihj(int i, int h, int j){
-	return (pf_d2.get_s3(h,j)) * (pf_d2.myExp((-1)*((pf_d2.EC_new())+(h-i)*(pf_d2.EB_new()))/RT)) / (pf_d2.get_u1(i,j));
+	//return (pf_d2.get_s3(h,j)) * (pf_d2.myExp((-1)*((pf_d2.EC_new())+(h-i)*(pf_d2.EB_new()))/RT)) / (pf_d2.get_u1(i,j));
+	return (pf_d2.get_s3(h,j)) * (pf_d2.myExp((-1)*((pf_d2.EC_new())+(h-i)*(pf_d2.EB_new())-pf_d2.get_M_RT()*(h-i))/RT)) / (pf_d2.get_u1(i,j));
 }
 
 MyDouble StochasticTracebackD2::S3_ihlj(int i, int h, int l, int j){
-	return feasible(h,l) ? (pf_d2.get_up(h,l)) * (pf_d2.myExp(-((pf_d2.auPenalty_new(h,l)) + (pf_d2.ED5_new(h,l,h-1)) + (pf_d2.ED3_new(h,l,l+1)))/RT)) * ( (pf_d2.myExp(-(j-l)*(pf_d2.EB_new())/RT)) * (pf_d2.f(j+1,h,l)) + (pf_d2.get_u1(l+1,j)) ) / (pf_d2.get_s3(h,j)) : MyDouble(0.0);
+	//return feasible(h,l) ? (pf_d2.get_up(h,l)) * (pf_d2.myExp(-((pf_d2.auPenalty_new(h,l)) + (pf_d2.ED5_new(h,l,h-1)) + (pf_d2.ED3_new(h,l,l+1)))/RT)) * ( (pf_d2.myExp(-(j-l)*(pf_d2.EB_new())/RT)) * (pf_d2.f(j+1,h,l)) + (pf_d2.get_u1(l+1,j)) ) / (pf_d2.get_s3(h,j)) : MyDouble(0.0);
+	return feasible(h,l) ? (pf_d2.get_up(h,l)) * (pf_d2.myExp(-((pf_d2.auPenalty_new(h,l)) + (pf_d2.ED5_new(h,l,h-1)) + (pf_d2.ED3_new(h,l,l+1)))/RT)) * ( (pf_d2.myExp(-(j-l)*(pf_d2.EB_new()-pf_d2.get_M_RT())/RT)) * (pf_d2.f(j+1,h,l)) + (pf_d2.get_u1(l+1,j)) ) / (pf_d2.get_s3(h,j)) : MyDouble(0.0);
 }
 
 MyDouble StochasticTracebackD2::S3_MB_ihlj(int i, int h, int l, int j){
 	MyDouble term1 =  (pf_d2.myExp(-(j-l)*(pf_d2.EB_new())/RT)) * (pf_d2.f(j+1,h,l));
-	MyDouble term2 = (pf_d2.get_u1(l+1,j));
+	//MyDouble term2 = (pf_d2.get_u1(l+1,j);
+	MyDouble term2 = (pf_d2.get_u1(l+1,j)*pf_d2.myExp(pf_d2.get_M_RT()*(l-j)/RT));
 	return  term1 / (term1+term2);
 }
 
