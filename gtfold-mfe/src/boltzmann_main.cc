@@ -62,6 +62,7 @@ static int num_rnd = 0;
 static int ss_verbose_global = 0;
 static int print_energy_decompose = 0;
 static int dangles=2;//making dangle default value as 2
+static double scaleFactor=0.0;
 
 static bool LIMIT_DISTANCE = false;
 static int contactDistance = -1;
@@ -121,9 +122,10 @@ static void print_usage_developer_options() {
         printf("   -dS                  Calculate the partition function using sfold reccurences and use them in traceback.\n");
 	printf("			sampling matches the probability of that structure according to the Boltzmann Distribution.\n");
         //printf("   --sampleenergy DOUBLE      While sampling structures, Samples with Energy energy1 will only be sampled.\n");
-        printf("   --sampleenergy DOUBLE      Writes only sampled structures with free energy equal to DOUBLE to file prefix.sample. Only valid in combination with --sample.\n");
+        printf("   --sampleenergy DOUBLE      Writes only sampled structures with free energy equal to DOUBLE to file prefix.sample. Only valid in combination with --sample. Number of threads must be limited to one (-t 1).\n");
         //printf("   --counts-parallel  While sampling structures, parallelize INT sample counts among available threads (this is also a default behaviour of sampling).\n");
         //printf("   --parallelsample        While sampling structures, parallelize the processing of one sample (useful when sampling large sequence with number of samples being less than available threads).\n");
+	printf("   --scale DOUBLE	Use scaling facotr as DOUBLE to approximate partition function.\n");
         printf("   --parallelsample     Paralellizes the sampling of each individual structure.\n");
 	printf("			Only valid in combination with --sample.\n");
         //printf("   -s|--sample   INT  --separatectfiles [--ctfilesdir dump_dir_path] [--summaryfile dump_summery_file_name] Sample number of structures equal to INT and dump each structure to a ct file in dump_dir_path directory (if no value provided then use current directory value for this purpose) and also create a summary file with name stochastic_summery_file_name in dump_dir_path directory (if no value provided, use stochaSampleSummary.txt value for this purpose).\n");
@@ -218,6 +220,7 @@ static void printRunConfiguration(string seq) {
         if(BPP_ENABLED) if(!SILENT) printf("- bpp output file: %s\n", bppOutFile.c_str());
         if(PF_PRINT_ARRAYS_ENABLED) if(!SILENT) printf("+ partition function array print output file: %s\n", pfArraysOutFile.c_str());
         if(print_energy_decompose==1) if(!SILENT) printf("+ energy decompose output file: %s\n", energyDecomposeOutFile.c_str());
+        if(!SILENT) printf("- scale factor: %f\n", scaleFactor);
 
 	printf("\n");
 }
@@ -359,9 +362,12 @@ static void parse_options(int argc, char** argv) {
 				ST_D2_ENABLE_SCATTER_PLOT = true;
 			} else if(strcmp(argv[i],"--sampleenergy") == 0){
 				ST_D2_ENABLE_UNIFORM_SAMPLE = true;
-				if(i < argc){ST_D2_UNIFORM_SAMPLE_ENERGY = atof(argv[++i]);}
+				if(i+1 < argc){ST_D2_UNIFORM_SAMPLE_ENERGY = atof(argv[++i]);}//if(i < argc){ST_D2_UNIFORM_SAMPLE_ENERGY = atof(argv[++i]);}
 				else help();
-			} else if(strcmp(argv[i],"--checkfraction") == 0){
+			} else if(strcmp(argv[i],"--scale") == 0){
+                                if(i+1 < argc){scaleFactor = atof(argv[++i]);}
+                                else help();
+                        } else if(strcmp(argv[i],"--checkfraction") == 0){
 				ST_D2_ENABLE_CHECK_FRACTION = true;
 			} else if(strcmp(argv[i],"--estimatebpp") == 0){ 
 				ST_D2_ENABLE_BPP_PROBABILITY = true;
@@ -540,7 +546,7 @@ int boltzmann_main(int argc, char** argv) {
 		printf("\nComputing partition function...\n");
 		t1 = get_seconds();
 		PartitionFunctionD2 pf_d2;
-		pf_d2.calculate_partition(seq.length(),pf_count_mode,no_dangle_mode,PF_D2_UP_APPROX_ENABLED);
+		pf_d2.calculate_partition(seq.length(),pf_count_mode,no_dangle_mode,PF_D2_UP_APPROX_ENABLED,scaleFactor);
 		t1 = get_seconds() - t1;
 		printf("partition function computation running time: %9.6f seconds\n", t1);
 		//calculate_partition(seq.length(),0,0);
@@ -593,7 +599,7 @@ int boltzmann_main(int argc, char** argv) {
 			printf("\nComputing stochastic traceback...\n");
 			StochasticTracebackD2 st_d2;
 			t1 = get_seconds();
-                        st_d2.initialize(seq.length(), pf_count_mode, no_dangle_mode, print_energy_decompose, PF_D2_UP_APPROX_ENABLED,ST_D2_ENABLE_CHECK_FRACTION, energyDecomposeOutFile);
+                        st_d2.initialize(seq.length(), pf_count_mode, no_dangle_mode, print_energy_decompose, PF_D2_UP_APPROX_ENABLED,ST_D2_ENABLE_CHECK_FRACTION, energyDecomposeOutFile,scaleFactor);
                         t1 = get_seconds() - t1;
                         printf("D2 Traceback initialization (partition function computation) running time: %9.6f seconds\n", t1);
 			t1 = get_seconds();
