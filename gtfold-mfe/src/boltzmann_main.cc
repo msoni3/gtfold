@@ -510,6 +510,7 @@ int boltzmann_main(int argc, char** argv) {
 		exit(-1);
 	}
 	parse_mfe_options(argc, argv);
+
 	init_fold(seq.c_str());
 	g_LIMIT_DISTANCE = LIMIT_DISTANCE;
 	g_contactDistance = contactDistance;
@@ -522,6 +523,13 @@ int boltzmann_main(int argc, char** argv) {
 			printf("\nContact distance limit is higher than the sequence length. Continuing without restraining contact distance.\n");
 		else printf("\nLimiting contact distance to %d\n",contactDistance);
 	}
+	if(scaleFactor!=0.0){
+		//double mfe = calculate_mfe(argc, argv);
+		double mfe = calculate_mfe(seq);
+		scaleFactor = scaleFactor*mfe;
+	}
+
+
 	
 	if (CALC_PART_FUNC == true && CALC_PF_DS == true) {
 		int pf_count_mode = 0;
