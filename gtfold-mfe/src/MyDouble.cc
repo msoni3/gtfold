@@ -16,6 +16,7 @@ using namespace std;
 const int PRECISION = 1024;
 static char BIG_NUM_ENABLED = 'Y';//'N';//'Y';
 static int BIGNUM_ONLY=0;
+static int DOUBLE_ONLY=1;
 const int PRINT_DIGITS_AFTER_DECIMAL = 10;
 static int verbose=0;
 /*mpf_t getBigNum(double val2){
@@ -95,21 +96,21 @@ class MyDouble{
 			//mpf_clear(val2);//Do not un-comment this line, this line will cause errors
 		}
 		void createDouble(double val2){
-			//bigValue = 0;
-			if(BIGNUM_ONLY==1){
-				mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, val2);
-			       	createBigNum(op2);
-				mpf_clear(op2);
-				return;
-			}
-			if(bigValue!=0){ mpf_clear(*bigValue); delete bigValue; bigValue=0;}
-			if(smallValue==0){
-				if(verbose==1)printf("Allocation double for %f\n",val2);
-				smallValue = new double;
-			}
-			*smallValue = val2;
-			isBig='n';
-		}
+                        //bigValue = 0;
+                        if(BIGNUM_ONLY==1){
+                                mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, val2);
+                                createBigNum(op2);
+                                mpf_clear(op2);
+                                return;
+                        }
+                        if(bigValue!=0){ mpf_clear(*bigValue); delete bigValue; bigValue=0;}
+                        if(smallValue==0){
+                                if(verbose==1)printf("Allocation double for %f\n",val2);
+                                smallValue = new double;
+                        }
+                        *smallValue = val2;
+                        isBig='n';
+                }
 		void deallocate(){
 			if(isBig=='y'){ if(bigValue!=0){ if(verbose==1) printf("Deallocation mpf_t\n"); mpf_clear(*bigValue); delete(bigValue); bigValue=0;}isBig='X';}
 			else if(isBig=='n'){ if(smallValue!=0){ if(verbose==1) printf("Deallocation double for %f\n",*smallValue); delete(smallValue); smallValue=0;} isBig='X';}
@@ -179,7 +180,7 @@ class MyDouble{
 			else if(this->isBig=='n' && obj1.isBig=='n'){
 				double a = (*(this->smallValue)) * (*(obj1.smallValue));
 				//check if a is finite
-				if(isfinite(a)){
+				if(DOUBLE_ONLY || isfinite(a)){
 					MyDouble res;
 					res.createDouble(a);
 					return res;
@@ -222,7 +223,7 @@ class MyDouble{
 			else if(this->isBig=='n'){
 				double a = (*(this->smallValue)) * (*(obj1.smallValue));
 				//check if a is finite
-				if(isfinite(a)){
+				if(DOUBLE_ONLY || isfinite(a)){
 					MyDouble res;
 					res.createDouble(a);
 					return res;
@@ -280,7 +281,7 @@ class MyDouble{
 			else if(this->isBig=='n' && obj1.isBig=='n'){if(verbose==1)printf("operator+ MyDouble obj1 this->isBig=='n' && obj1.isBig=='n'\n");
 				double a = (*(this->smallValue)) + (*(obj1.smallValue));
 				//check if a is finite
-				if(isfinite(a)){
+				if(DOUBLE_ONLY || isfinite(a)){
 					MyDouble res;
 					res.createDouble(a);
 					return res;
@@ -322,7 +323,7 @@ class MyDouble{
 			else if(this->isBig=='n'){
 				double a = (*(this->smallValue)) + (*(obj1.smallValue));
 				//check if a is finite
-				if(isfinite(a)){
+				if(DOUBLE_ONLY || isfinite(a)){
 					MyDouble res;
 					res.createDouble(a);
 					return res;
@@ -379,7 +380,7 @@ class MyDouble{
 			else if(this->isBig=='n' && obj1.isBig=='n'){
 				double a = (*(this->smallValue)) - (*(obj1.smallValue));
 				//check if a is finite
-				if(isfinite(a)){
+				if(DOUBLE_ONLY || isfinite(a)){
 					MyDouble res;
 					res.createDouble(a);
 					return res;
@@ -421,7 +422,7 @@ class MyDouble{
 			else if(this->isBig=='n'){
 				double a = (*(this->smallValue)) - (*(obj1.smallValue));
 				//check if a is finite
-				if(isfinite(a)){
+				if(DOUBLE_ONLY || isfinite(a)){
 					MyDouble res;
 					res.createDouble(a);
 					return res;
@@ -477,7 +478,7 @@ class MyDouble{
 			else if(this->isBig=='n' && obj1.isBig=='n'){
 				double a = (*(this->smallValue)) / (*(obj1.smallValue));
 				//check if a is finite
-				if(isfinite(a)){
+				if(DOUBLE_ONLY || isfinite(a)){
 					MyDouble res;
 					res.createDouble(a);
 					return res;
@@ -519,7 +520,7 @@ class MyDouble{
 			else if(this->isBig=='n'){
 				double a = (*(this->smallValue)) / (*(obj1.smallValue));
 				//check if a is finite
-				if(isfinite(a)){
+				if(DOUBLE_ONLY || isfinite(a)){
 					MyDouble res;
 					res.createDouble(a);
 					return res;
