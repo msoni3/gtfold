@@ -219,6 +219,7 @@ MyDouble PartitionFunctionD2::calculate_partition(int len, int pf_count_mode, in
 	PF_D2_UP_APPROX_ENABLED = PF_D2_UP_APPROX_ENABLED1;
 	//partition function scaling parameters
 	double mfe=1.0;//TODO here I am assuming scaleFactor is actually scaleFactor*mfe input by the user
+	//cout<<"In Partition Function, scale factor = "<<scaleFactor<<endl;
 	M_RT = (scaleFactor*mfe*100)/part_len;
 
 	//OPTIMIZED CODE STARTS
@@ -257,7 +258,7 @@ void PartitionFunctionD2::free_partition()
 void PartitionFunctionD2::init_part_arrays_negatives(){
 	int i,j,n;
 	n = part_len+1;
-	
+	MyDouble minusOne(-1);	
 	//OPTIMIZED CODE STARTS
 	#ifdef _OPENMP
 	#pragma omp parallel for private (i,j) schedule(guided)
@@ -265,13 +266,13 @@ void PartitionFunctionD2::init_part_arrays_negatives(){
 	//OPTIMIZED CODE ENDS
 	for(i=0; i<=n; ++i){
 		for(j=0; j<=n; ++j){
-			u[i][j]=MyDouble(-1.0);
-			up[i][j]=MyDouble(-1.0);
-			upm[i][j]=MyDouble(-1.0);
-			s1[i][j]=MyDouble(-1.0);
-			s2[i][j]=MyDouble(-1.0);
-			s3[i][j]=MyDouble(-1.0);
-			u1[i][j]=MyDouble(-1.0);
+			u[i][j]=minusOne;
+			up[i][j]=minusOne;
+			upm[i][j]=minusOne;
+			s1[i][j]=minusOne;
+			s2[i][j]=minusOne;
+			s3[i][j]=minusOne;
+			u1[i][j]=minusOne;
 		}
 	}
 	
@@ -283,7 +284,7 @@ void PartitionFunctionD2::init_part_arrays_negatives(){
 	
 	for(i=0; i<=n+1; ++i){
 		for(j=0; j<=n+1; ++j){
-			u1[i][j]=MyDouble(-1.0);
+			u1[i][j]=minusOne;
 		}
 	}
 }
@@ -291,7 +292,8 @@ void PartitionFunctionD2::init_partition_arrays()
 {  init_part_arrays_negatives();
 	int i, j;
 	int n = part_len;
-	
+	MyDouble one(1.0);
+	MyDouble zero(0.0);	
 	//OPTIMIZED CODE STARTS
 	#ifdef _OPENMP
 	#pragma omp parallel for private (i,j) schedule(guided)
@@ -300,17 +302,17 @@ void PartitionFunctionD2::init_partition_arrays()
 	
 	for(i=1; i<=n; ++i){
 		for(j=i; j<=i+TURN && j<=n; ++j){
-			u[i][j] = MyDouble(1.0);
-			up[i][j] = MyDouble(0.0);
-			u1[i][j] = MyDouble(0.0);
-			s1[i][j] = MyDouble(0.0);
-			s2[i][j] = MyDouble(0.0);
-			s3[i][j] = MyDouble(0.0);
+			u[i][j] = one;
+			up[i][j] = zero;
+			u1[i][j] = zero;
+			s1[i][j] = zero;
+			s2[i][j] = zero;
+			s3[i][j] = zero;
 		}
 	}
 	for(i=1; i<=n-4; ++i){
-                s1[i][i+4] = MyDouble(0.0);
-                s2[i][i+4] = MyDouble(0.0);
+                s1[i][i+4] = zero;
+                s2[i][i+4] = zero;
         }
 
 	
@@ -321,8 +323,8 @@ void PartitionFunctionD2::init_partition_arrays()
 	//OPTIMIZED CODE ENDS
 	
 	for(i=1; i<=n; ++i){
-		u[i+1][i] = MyDouble(1.0);
-		u1[i+1][i] = MyDouble(0.0);
+		u[i+1][i] = one;
+		u1[i+1][i] = zero;
 	}
 	
 	//OPTIMIZED CODE STARTS
@@ -332,7 +334,7 @@ void PartitionFunctionD2::init_partition_arrays()
 	//OPTIMIZED CODE ENDS
 	//for(i=1; i<=n; i++){//OLD
 	for(i=1; i<=n-1; i++){//NEW
-		u1[i+2][i] = MyDouble(0.0);//TODO Uncomment it, as of now i have tested it that commenting it does not impact correctness
+		u1[i+2][i] = zero;//TODO Uncomment it, as of now i have tested it that commenting it does not impact correctness
 	}
 }
 void PartitionFunctionD2::create_partition_arrays()
@@ -374,13 +376,13 @@ MyDouble** PartitionFunctionD2::mallocTwoD(int r, int c) {
             return NULL;
         }
     }
-/*
+
     for(i=0; i<r; ++i){
 	for(j=0; j<c; ++j){
-	  //arr[i][j].init();
+	  arr[i][j].init();
 	}
     }
-*/
+
     return arr;
 }
 void PartitionFunctionD2::freeTwoD(MyDouble** arr, int r, int c) {
