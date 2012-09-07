@@ -258,7 +258,7 @@ void PartitionFunctionD2::free_partition()
 void PartitionFunctionD2::init_part_arrays_negatives(){
 	int i,j,n;
 	n = part_len+1;
-	MyDouble minusOne(-1);	
+	MyDouble minusOne(-1.0);	
 	//OPTIMIZED CODE STARTS
 	#ifdef _OPENMP
 	#pragma omp parallel for private (i,j) schedule(guided)
