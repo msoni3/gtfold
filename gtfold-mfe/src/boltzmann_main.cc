@@ -185,7 +185,6 @@ static void detailed_help(){
 }
 
 static void printRunConfiguration(string seq) {
-
         if(!SILENT) printf("\nRun Configuration:\n");
 
 	if (PF_COUNT_MODE == true) {
@@ -510,13 +509,12 @@ int boltzmann_main(int argc, char** argv) {
 		exit(-1);
 	}
 	parse_mfe_options(argc, argv);
-
 	init_fold(seq.c_str());
 	g_LIMIT_DISTANCE = LIMIT_DISTANCE;
 	g_contactDistance = contactDistance;
 
 	readThermodynamicParameters(paramDir.c_str(), PARAM_DIR, 0, 0, 0);
-	printRunConfiguration(seqfile);
+	printRunConfiguration(seq);
 	
 	if (LIMIT_DISTANCE) {
 		if (strlen(seq.c_str()) < contactDistance) 
