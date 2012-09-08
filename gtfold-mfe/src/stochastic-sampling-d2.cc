@@ -697,7 +697,7 @@ double StochasticTracebackD2<MyDouble>::rnd_structure_parallel(int* structure, i
 			#pragma omp parallel for private(index) shared(energy_threads, g_stack_threads, structure) schedule(dynamic) num_threads(threads_for_one_sample)
 			//#pragma omp parallel for private(index) shared(energy_threads, g_stack_threads, structure) schedule(guided)
 			#endif
-			for (index = 0; index < g_deque.size(); ++index) {
+			for (index = 0; index < (int)g_deque.size(); ++index) {
 				int thdId = omp_get_thread_num();
 				base_pair bp = g_deque[index];
 				if (bp.type() == U)
@@ -1357,7 +1357,11 @@ void StochasticTracebackD2<MyDouble>::batch_sample_and_dump(int num_rnd, std::st
 	//data dump preparation code starts here
 	if(ctFileDumpDir.compare("")==0){
 		char abspath[1000];
-		getcwd(abspath, 1000);
+		char* tmp = getcwd(abspath, 1000);
+		if(tmp!=abspath){//TODO debug
+			cout<<"Error in getcwd, exiting...\n";
+			exit(-1);
+		}
 		ctFileDumpDir = abspath;
 	}
 	cout<<"Using ctFileDumpDir = "<<ctFileDumpDir<<endl;
@@ -1376,7 +1380,8 @@ void StochasticTracebackD2<MyDouble>::batch_sample_and_dump(int num_rnd, std::st
 	int* structure = new int[length+1];
 	if (num_rnd > 0 ) {
 		printf("\nSampling structures...\n");
-		int count, nsamples =0;
+		int count;
+		//int nsamples =0;
 		for (count = 1; count <= num_rnd; ++count) 
 		{
 			memset(structure, 0, (length+1)*sizeof(int));
