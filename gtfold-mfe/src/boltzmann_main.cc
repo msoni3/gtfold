@@ -14,13 +14,14 @@
 #include "algorithms-partition.h"
 #include "boltzmann_main.h"
 #include "partition-func.h"
-#include "partition-func-d2.h"
+#include "partition-func-d2.cc"
 #include "mfe_main.h"
 #include "stochastic-sampling.h"
-#include "stochastic-sampling-d2.h"
+#include "stochastic-sampling-d2.cc"
 #include "algorithms.h"
 #include "traceback.h"
 #include "utils.h"
+#include "AdvancedDouble.cc"
 
 using namespace std;
 
@@ -551,7 +552,9 @@ int boltzmann_main(int argc, char** argv) {
 		//printf("\nComputing partition function in -d2 mode ..., pf_count_mode=%d, no_dangle_mode=%d, PF_D2_UP_APPROX_ENABLED=%d\n", pf_count_mode, no_dangle_mode,PF_D2_UP_APPROX_ENABLED);
 		printf("\nComputing partition function...\n");
 		t1 = get_seconds();
-		PartitionFunctionD2 pf_d2;
+		//PartitionFunctionD2<AdvancedDouble> pf_d2;
+		PartitionFunctionD2<AdvancedDouble> pf_d2;
+		pf_d2.printManoj();
 		pf_d2.calculate_partition(seq.length(),pf_count_mode,no_dangle_mode,PF_D2_UP_APPROX_ENABLED,scaleFactor);
 		t1 = get_seconds() - t1;
 		printf("partition function computation running time: %9.6f seconds\n", t1);
@@ -603,7 +606,8 @@ int boltzmann_main(int argc, char** argv) {
 		if(CALC_PF_D2 == true){
 			//printf("\nComputing stochastic traceback in -d2 mode ..., pf_count_mode=%d, no_dangle_mode=%d, PF_D2_UP_APPROX_ENABLED=%d\n", pf_count_mode, no_dangle_mode,PF_D2_UP_APPROX_ENABLED);
 			printf("\nComputing stochastic traceback...\n");
-			StochasticTracebackD2 st_d2;
+		//StochasticTracebackD2<AdvancedDouble> st_d2;
+		StochasticTracebackD2<AdvancedDouble> st_d2;
 			t1 = get_seconds();
                         st_d2.initialize(seq.length(), pf_count_mode, no_dangle_mode, print_energy_decompose, PF_D2_UP_APPROX_ENABLED,ST_D2_ENABLE_CHECK_FRACTION, energyDecomposeOutFile,scaleFactor);
                         t1 = get_seconds() - t1;

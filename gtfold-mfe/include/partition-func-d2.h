@@ -1,13 +1,18 @@
 #ifndef _PARTITION_FUNCTION_D2_H
 #define _PARTITION_FUNCTION_D2_H
-
+#include<iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <math.h>
-#include "MyDouble.cc"
+
+//#include "MyDouble.cc"
 /*
 #ifdef __cplusplus
 extern "C" {
 #endif
  */
+template<class MyDouble>
 class PartitionFunctionD2{
 	public:
 		bool PF_D2_UP_APPROX_ENABLED;
@@ -57,6 +62,7 @@ class PartitionFunctionD2{
 		//void printMatrix(MyDouble** u, int part_len);
 		void printMatrix(MyDouble** u, int part_len, FILE* pfarraysoutputfile);//pfarraysoutputfile can be stdin in order to make it to print to standard output
 	public:
+		void printManoj(){std::cout<<"\n\n\n\nmanoj\n\n\n";}
 		//Functions providing general utilities related to energy
 		MyDouble myExp(double arg);
 		double ED3_new(int i, int j, int k);
@@ -82,7 +88,7 @@ class PartitionFunctionD2{
 		MyDouble calculate_partition(int len, int pf_count_mode, int no_dangle_mode, bool PF_D2_UP_APPROX_ENABLED, double scaleFactor);
 		void free_partition();
 		void printAllMatrixes();
-		void printAllMatrixesToFile(string pfArraysOutputFile);
+		void printAllMatrixesToFile(std::string pfArraysOutputFile);
 };
 /*
 #ifdef __cplusplus

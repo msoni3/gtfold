@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "partition-func-d2.h"
 #include "energy.h"
 #include "algorithms-partition.h"
@@ -11,13 +8,16 @@
 
 #define PAIRABLE_POINTS_GATHER_OPTIMIZATION_DISABLED true
 
+template<class MyDouble>
 static void errorAndExit(char* msg, int i, int j, MyDouble oldVal, MyDouble newVal){
 	printf("%s\n", msg);
 	printf("i=%d,j=%d,oldVal=",i,j);oldVal.print();printf(",newVal=");newVal.print();printf("\n");
 	printf("%s","\nprogram is exiting now due to above error\n");
 	exit(-1);
 }
-MyDouble PartitionFunctionD2::myExp(double arg){
+
+template<class MyDouble>
+MyDouble PartitionFunctionD2<MyDouble>::myExp(double arg){
 	double posArgMultRT = (-1)*arg*RT;
 	if(posArgMultRT>=INFINITY_){
 	//if(posArgMultRT>=999999999999999){
@@ -27,7 +27,8 @@ MyDouble PartitionFunctionD2::myExp(double arg){
 	return MyDouble(exp(arg));
 }
 
-/*void PartitionFunctionD2::printMatrix(MyDouble** u, int part_len){
+/*template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::printMatrix(MyDouble** u, int part_len){
 	int i,j;
 	for (i = 0; i <= part_len+1; ++i)
 	{
@@ -40,7 +41,8 @@ MyDouble PartitionFunctionD2::myExp(double arg){
 	}
 }*/
 
-void PartitionFunctionD2::printMatrix(MyDouble** u, int part_len, FILE* pfarraysoutfile){
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::printMatrix(MyDouble** u, int part_len, FILE* pfarraysoutfile){
 	int i,j;
 	for (i = 0; i <= part_len+1; ++i)
 	{
@@ -55,23 +57,37 @@ void PartitionFunctionD2::printMatrix(MyDouble** u, int part_len, FILE* pfarrays
 
 //Functions to retrieve partition function array entries
 //operator == varified with MyDouble
-MyDouble PartitionFunctionD2::get_u(int i, int j) {if(u[i][j]==-1.0) errorAndExit("get_u entry is -1.",i,j,-1.0,0.0); return u[i][j];}
-MyDouble PartitionFunctionD2::get_up(int i, int j) {if(up[i][j]==-1.0) errorAndExit("get_up entry is -1.\n",i,j,-1.0,0.0); return up[i][j];}
-MyDouble PartitionFunctionD2::get_upm(int i, int j) {if(upm[i][j]==-1.0) errorAndExit("get_upm entry is -1.\n",i,j,-1.0,0.0); return upm[i][j];}
-MyDouble PartitionFunctionD2::get_u1(int i, int j) {if(u1[i][j]==-1.0) errorAndExit("get_u1 entry is -1.\n",i,j,-1.0,0.0); return u1[i][j];}
-MyDouble PartitionFunctionD2::get_s1(int i, int j) {if(s1[i][j]==-1.0) errorAndExit("get_s1 entry is -1.\n",i,j,-1.0,0.0); return s1[i][j];}
-MyDouble PartitionFunctionD2::get_s2(int i, int j) {if(s2[i][j]==-1.0) errorAndExit("get_s2 entry is -1.\n",i,j,-1.0,0.0); return s2[i][j];}
-MyDouble PartitionFunctionD2::get_s3(int i, int j) {if(s3[i][j]==-1.0) errorAndExit("get_s3 entry is -1.\n",i,j,-1.0,0.0); return s3[i][j];}
+template<class MyDouble>
+MyDouble PartitionFunctionD2<MyDouble>::get_u(int i, int j) {if(u[i][j]==-1.0) errorAndExit("get_u entry is -1.",i,j,MyDouble(-1.0),MyDouble(0.0)); return u[i][j];}
+template<class MyDouble>
+MyDouble PartitionFunctionD2<MyDouble>::get_up(int i, int j) {if(up[i][j]==-1.0) errorAndExit("get_up entry is -1.\n",i,j,MyDouble(-1.0),MyDouble(0.0)); return up[i][j];}
+template<class MyDouble>
+MyDouble PartitionFunctionD2<MyDouble>::get_upm(int i, int j) {if(upm[i][j]==-1.0) errorAndExit("get_upm entry is -1.\n",i,j,MyDouble(-1.0),MyDouble(0.0)); return upm[i][j];}
+template<class MyDouble>
+MyDouble PartitionFunctionD2<MyDouble>::get_u1(int i, int j) {if(u1[i][j]==-1.0) errorAndExit("get_u1 entry is -1.\n",i,j,MyDouble(-1.0),MyDouble(0.0)); return u1[i][j];}
+template<class MyDouble>
+MyDouble PartitionFunctionD2<MyDouble>::get_s1(int i, int j) {if(s1[i][j]==-1.0) errorAndExit("get_s1 entry is -1.\n",i,j,MyDouble(-1.0),MyDouble(0.0)); return s1[i][j];}
+template<class MyDouble>
+MyDouble PartitionFunctionD2<MyDouble>::get_s2(int i, int j) {if(s2[i][j]==-1.0) errorAndExit("get_s2 entry is -1.\n",i,j,MyDouble(-1.0),MyDouble(0.0)); return s2[i][j];}
+template<class MyDouble>
+MyDouble PartitionFunctionD2<MyDouble>::get_s3(int i, int j) {if(s3[i][j]==-1.0) errorAndExit("get_s3 entry is -1.\n",i,j,MyDouble(-1.0),MyDouble(0.0)); return s3[i][j];}
 
 //Functions to set partition function array entries
 //operator != varified with MyDouble
-void PartitionFunctionD2::set_u(int i, int j, MyDouble val) {if(u[i][j]!=-1 && u[i][j]!=val) errorAndExit("set_u entry is not -1.\n",i,j,u[i][j],val); u[i][j]=val;}
-void PartitionFunctionD2::set_up(int i, int j, MyDouble val) {if(up[i][j]!=-1 && up[i][j]!=val) errorAndExit("set_up entry is not -1.\n",i,j,up[i][j],val); up[i][j]=val;}
-void PartitionFunctionD2::set_upm(int i, int j, MyDouble val) {if(upm[i][j]!=-1 && upm[i][j]!=val) errorAndExit("set_upm entry is not -1.\n",i,j,upm[i][j],val); upm[i][j]=val;}
-void PartitionFunctionD2::set_u1(int i, int j, MyDouble val) {if(u1[i][j]!=-1 && u1[i][j]!=val) errorAndExit("set_u1 entry is not -1.\n",i,j,u1[i][j],val); u1[i][j]=val;}
-void PartitionFunctionD2::set_s1(int i, int j, MyDouble val) {if(s1[i][j]!=-1 && s1[i][j]!=val) errorAndExit("set_s1 entry is not -1.\n",i,j,s1[i][j],val); s1[i][j]=val;}
-void PartitionFunctionD2::set_s2(int i, int j, MyDouble val) {if(s2[i][j]!=-1 && s2[i][j]!=val) errorAndExit("set_s2 entry is not -1.\n",i,j,s2[i][j],val); s2[i][j]=val;}
-void PartitionFunctionD2::set_s3(int i, int j, MyDouble val) {if(s3[i][j]!=-1 && s3[i][j]!=val) errorAndExit("set_s3 entry is not -1.\n",i,j,s3[i][j],val); s3[i][j]=val;}
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::set_u(int i, int j, MyDouble val) {if(u[i][j]!=-1 && u[i][j]!=val) errorAndExit("set_u entry is not -1.\n",i,j,u[i][j],val); u[i][j]=val;}
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::set_up(int i, int j, MyDouble val) {if(up[i][j]!=-1 && up[i][j]!=val) errorAndExit("set_up entry is not -1.\n",i,j,up[i][j],val); up[i][j]=val;}
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::set_upm(int i, int j, MyDouble val) {if(upm[i][j]!=-1 && upm[i][j]!=val) errorAndExit("set_upm entry is not -1.\n",i,j,upm[i][j],val); upm[i][j]=val;}
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::set_u1(int i, int j, MyDouble val) {if(u1[i][j]!=-1 && u1[i][j]!=val) errorAndExit("set_u1 entry is not -1.\n",i,j,u1[i][j],val); u1[i][j]=val;}
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::set_s1(int i, int j, MyDouble val) {if(s1[i][j]!=-1 && s1[i][j]!=val) errorAndExit("set_s1 entry is not -1.\n",i,j,s1[i][j],val); s1[i][j]=val;}
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::set_s2(int i, int j, MyDouble val) {if(s2[i][j]!=-1 && s2[i][j]!=val) errorAndExit("set_s2 entry is not -1.\n",i,j,s2[i][j],val); s2[i][j]=val;}
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::set_s3(int i, int j, MyDouble val) {if(s3[i][j]!=-1 && s3[i][j]!=val) errorAndExit("set_s3 entry is not -1.\n",i,j,s3[i][j],val); s3[i][j]=val;}
 
 /*//Following functions are to be used once testing completes as they are quicker then their test counterparts
 inline double get_u(int i, int j) {return u[i][j];}
@@ -99,25 +115,30 @@ inline void set_s3(int i, int j, double val) {s3[i][j]=val;}
 */
 
 //Functions providing general utilities related to energy
-double PartitionFunctionD2::get_M_RT(){
+template<class MyDouble>
+double PartitionFunctionD2<MyDouble>::get_M_RT(){
 	return M_RT;
 }
-double PartitionFunctionD2::eS_new(int i, int j){
+template<class MyDouble>
+double PartitionFunctionD2<MyDouble>::eS_new(int i, int j){
 	if(PF_COUNT_MODE_) return 0;
 	return eS(i,j);
 	//return eS(i,j)/100;
 }
-double PartitionFunctionD2::eH_new(int i, int j){
+template<class MyDouble>
+double PartitionFunctionD2<MyDouble>::eH_new(int i, int j){
 	if(PF_COUNT_MODE_) return 0;
 	return eH(i,j);
 	//return eH(i,j)/100;
 }
-double PartitionFunctionD2::eL_new(int i, int j, int p, int q){
+template<class MyDouble>
+double PartitionFunctionD2<MyDouble>::eL_new(int i, int j, int p, int q){
 	if(PF_COUNT_MODE_) return 0;
 	return eL(i,j,p,q);
 	//return eL(i,j,p,q)/100;
 }
-double PartitionFunctionD2::ED3_new(int i, int j, int k){
+template<class MyDouble>
+double PartitionFunctionD2<MyDouble>::ED3_new(int i, int j, int k){
 	if(NO_DANGLE_MODE_) return 0;
 	if(PF_COUNT_MODE_) return 0;
 	//if(k > part_len) return 0;//This is to take care of round robin way of d2, this is shel's suggestion and rnafold also seems to follow this
@@ -125,7 +146,8 @@ double PartitionFunctionD2::ED3_new(int i, int j, int k){
 	return Ed5(j,i,k);
 	//return Ed5(j,i,k)/100;
 }
-double PartitionFunctionD2::ED5_new(int i, int j, int k){
+template<class MyDouble>
+double PartitionFunctionD2<MyDouble>::ED5_new(int i, int j, int k){
 	if(NO_DANGLE_MODE_) return 0;
 	if(PF_COUNT_MODE_) return 0;
 	//if (k<1) return 0;//This is to take care of round robin way of d2, this is shel's suggestion and rnafold also seems to follow this
@@ -133,27 +155,32 @@ double PartitionFunctionD2::ED5_new(int i, int j, int k){
 	return Ed3(j,i,k);
 	//return Ed3(j,i,k)/100;
 }
-double PartitionFunctionD2::EA_new(){
+template<class MyDouble>
+double PartitionFunctionD2<MyDouble>::EA_new(){
 	if(PF_COUNT_MODE_) return 0;
 	return Ea;
 	//return Ea/100;
 }
-double PartitionFunctionD2::EB_new(){
+template<class MyDouble>
+double PartitionFunctionD2<MyDouble>::EB_new(){
 	if(PF_COUNT_MODE_) return 0;
 	return Ec;
 	//return Ec/100;
 }
-double PartitionFunctionD2::EC_new(){
+template<class MyDouble>
+double PartitionFunctionD2<MyDouble>::EC_new(){
 	if(PF_COUNT_MODE_) return 0;
 	return Eb;
 	//return Eb/100;
 }
-double PartitionFunctionD2::auPenalty_new(int i, int j){
+template<class MyDouble>
+double PartitionFunctionD2<MyDouble>::auPenalty_new(int i, int j){
 	if(PF_COUNT_MODE_) return 0;
 	return auPenalty(i,j);
 	//return auPenalty(i,j)/100;
 }
-MyDouble PartitionFunctionD2::f(int j, int h, int l){
+template<class MyDouble>
+MyDouble PartitionFunctionD2<MyDouble>::f(int j, int h, int l){
 	//if(j - 1 == l || PF_COUNT_MODE_ || NO_DANGLE_MODE_)//TODO: if(j - 1 == l)
 	if(PF_COUNT_MODE_ || NO_DANGLE_MODE_)//New: please confirm it
 	return MyDouble(1.0);
@@ -167,7 +194,8 @@ MyDouble PartitionFunctionD2::f(int j, int h, int l){
 }
 
 //Functions to calculate partition, and other partition function related utilities exposed to outside world
-void PartitionFunctionD2::printAllMatrixes(){
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::printAllMatrixes(){
 	printf("\n\nAfter calculation, u matrix:\n\n");
 	printMatrix(u,part_len,stdout);
 	printf("\n\nAfter calculation, up matrix:\n\n");
@@ -184,7 +212,8 @@ void PartitionFunctionD2::printAllMatrixes(){
 	printMatrix(s3,part_len,stdout);
 }
 
-void PartitionFunctionD2::printAllMatrixesToFile(string pfArraysOutputFile){
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::printAllMatrixesToFile(string pfArraysOutputFile){
 	FILE* pfarraysoutfile = fopen(pfArraysOutputFile.c_str(), "w");
         if(pfarraysoutfile==NULL){
         	cerr<<"Error in opening file: "<<pfarraysoutfile<<endl;
@@ -211,7 +240,8 @@ void PartitionFunctionD2::printAllMatrixesToFile(string pfArraysOutputFile){
 
 
 }
-MyDouble PartitionFunctionD2::calculate_partition(int len, int pf_count_mode, int no_dangle_mode, bool PF_D2_UP_APPROX_ENABLED1, double scaleFactor)
+template<class MyDouble>
+MyDouble PartitionFunctionD2<MyDouble>::calculate_partition(int len, int pf_count_mode, int no_dangle_mode, bool PF_D2_UP_APPROX_ENABLED1, double scaleFactor)
 {
 	PF_COUNT_MODE_ = pf_count_mode;
 	NO_DANGLE_MODE_ = no_dangle_mode;
@@ -251,11 +281,13 @@ MyDouble PartitionFunctionD2::calculate_partition(int len, int pf_count_mode, in
 
 }
 //partition arrays management related functions
-void PartitionFunctionD2::free_partition()
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::free_partition()
 {
 	free_partition_arrays();
 }
-void PartitionFunctionD2::init_part_arrays_negatives(){
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::init_part_arrays_negatives(){
 	int i,j,n;
 	n = part_len+1;
 	MyDouble minusOne(-1.0);	
@@ -288,7 +320,8 @@ void PartitionFunctionD2::init_part_arrays_negatives(){
 		}
 	}
 }
-void PartitionFunctionD2::init_partition_arrays()
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::init_partition_arrays()
 {  init_part_arrays_negatives();
 	int i, j;
 	int n = part_len;
@@ -337,7 +370,8 @@ void PartitionFunctionD2::init_partition_arrays()
 		u1[i+2][i] = zero;//TODO Uncomment it, as of now i have tested it that commenting it does not impact correctness
 	}
 }
-void PartitionFunctionD2::create_partition_arrays()
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::create_partition_arrays()
 {
 	int len = part_len + 2;
 	u = mallocTwoD(len,len);
@@ -348,7 +382,8 @@ void PartitionFunctionD2::create_partition_arrays()
 	s3 = mallocTwoD(len,len);
 	u1 = mallocTwoD(len+1,len+1);
 }
-void PartitionFunctionD2::free_partition_arrays()
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::free_partition_arrays()
 {
 	int len = part_len + 2;
 	freeTwoD(u,len,len);
@@ -361,7 +396,8 @@ void PartitionFunctionD2::free_partition_arrays()
 }
 
 //general utility functions
-MyDouble** PartitionFunctionD2::mallocTwoD(int r, int c) {
+template<class MyDouble>
+MyDouble** PartitionFunctionD2<MyDouble>::mallocTwoD(int r, int c) {
     MyDouble** arr = (MyDouble **)malloc(r*sizeof(MyDouble));
     int i,j;
     for(i=0; i<r; i++) {
@@ -385,7 +421,8 @@ MyDouble** PartitionFunctionD2::mallocTwoD(int r, int c) {
 
     return arr;
 }
-void PartitionFunctionD2::freeTwoD(MyDouble** arr, int r, int c) {
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::freeTwoD(MyDouble** arr, int r, int c) {
     int i,j;
      for(i=0; i<r; ++i){
         for(j=0; j<c; ++j){
@@ -398,7 +435,8 @@ void PartitionFunctionD2::freeTwoD(MyDouble** arr, int r, int c) {
     free(arr);
 }
 
-void PartitionFunctionD2::fill_partition_arrays()
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::fill_partition_arrays()
 {
 	int b,i,j;
 	int n=part_len;
@@ -494,7 +532,8 @@ void PartitionFunctionD2::fill_partition_arrays()
 }
 
 //Functions to calculate partition function array entries
-void PartitionFunctionD2::calc_s1(int h, int j)
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::calc_s1(int h, int j)
 {
 	int l;
 	MyDouble s1_val(0.0);
@@ -505,7 +544,8 @@ void PartitionFunctionD2::calc_s1(int h, int j)
 	}
 	set_s1(h,j,s1_val);
 }
-void PartitionFunctionD2::calc_s2(int h, int j)
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::calc_s2(int h, int j)
 {
 	int l;
 	MyDouble s2_val(0.0);
@@ -516,7 +556,8 @@ void PartitionFunctionD2::calc_s2(int h, int j)
 	}
 	set_s2(h, j, s2_val);
 }
-void PartitionFunctionD2::calc_s3(int h, int j)
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::calc_s3(int h, int j)
 {
 	int l;
 	MyDouble s3_val(0.0);
@@ -529,7 +570,8 @@ void PartitionFunctionD2::calc_s3(int h, int j)
 	}
 	set_s3(h, j, s3_val);
 }
-void PartitionFunctionD2::calc_upm(int i, int j){
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::calc_upm(int i, int j){
 	double a = EA_new();
 	double b = EB_new();
 	double c = EC_new();
@@ -551,7 +593,8 @@ void PartitionFunctionD2::calc_upm(int i, int j){
 		set_upm(i, j, 0.0);  
 	}
 }
-void PartitionFunctionD2::calc_u1(int i, int j){
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::calc_u1(int i, int j){
 	double b = EB_new();
 	double c = EC_new();
 	int h;
@@ -562,7 +605,8 @@ void PartitionFunctionD2::calc_u1(int i, int j){
 	}
 	set_u1(i, j, quadraticSum);
 }
-void PartitionFunctionD2::calc_u(int i, int j)
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::calc_u(int i, int j)
 {
 	//MyDouble uval(1.0);//uval will be initialized to double with value of 1.0
 	MyDouble uval(myExp( M_RT*(j-i+1) / RT));//uval will be initialized to double with value of 1.0
@@ -578,7 +622,8 @@ void PartitionFunctionD2::calc_u(int i, int j)
 	}
 	set_u(i, j, uval);
 }
-void PartitionFunctionD2::calc_up(int i, int j)
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::calc_up(int i, int j)
 {
 	MyDouble up_val(0.0);
 	if (canPair(RNA[i],RNA[j]))
@@ -609,7 +654,8 @@ void PartitionFunctionD2::calc_up(int i, int j)
 	}
 }
 
-void PartitionFunctionD2::calc_up_serial_and_approximate(int i, int j)
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::calc_up_serial_and_approximate(int i, int j)
 {
         MyDouble up_val(0.0);
         if (canPair(RNA[i],RNA[j]))
@@ -644,7 +690,8 @@ void PartitionFunctionD2::calc_up_serial_and_approximate(int i, int j)
         }
 }
 //TODO complete it
-void PartitionFunctionD2::calc_up_parallel(int i, int j)
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::calc_up_parallel(int i, int j)
 {
 	MyDouble up_val(0.0);
 	if (canPair(RNA[i],RNA[j]))
@@ -679,7 +726,8 @@ void PartitionFunctionD2::calc_up_parallel(int i, int j)
 	}
 }
 //TODO complete it
-void PartitionFunctionD2::calc_up_parallel_and_approximate(int i, int j)
+template<class MyDouble>
+void PartitionFunctionD2<MyDouble>::calc_up_parallel_and_approximate(int i, int j)
 {
         MyDouble up_val(0.0);
         if (canPair(RNA[i],RNA[j]))
