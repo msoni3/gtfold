@@ -490,7 +490,8 @@ class AdvancedDouble_Hybrid{
 				}
 			}
 			else{
-				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);	
+				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);
+				exit(-1);	
 			}
 		}
 		AdvancedDouble_Hybrid operator*(const double &obj1_double) const {
@@ -529,6 +530,7 @@ class AdvancedDouble_Hybrid{
 			}
 			else{
 				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);	
+				exit(-1);	
 			}
 		}
 
@@ -580,10 +582,10 @@ class AdvancedDouble_Hybrid{
 				}
 			}
 			else{
-				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);	
+				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);
+				exit(-1);	
 			}
 		}
-
 
 		AdvancedDouble_Hybrid operator+(const double &obj1_double) const {
 			const AdvancedDouble_Hybrid obj1(obj1_double);
@@ -620,7 +622,8 @@ class AdvancedDouble_Hybrid{
 				}
 			}
 			else{
-				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);	
+				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);
+				exit(-1);	
 			}
 		}
 		AdvancedDouble_Hybrid operator-(const AdvancedDouble_Hybrid &obj1) const {
@@ -672,6 +675,7 @@ class AdvancedDouble_Hybrid{
 			}
 			else{
 				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);	
+				exit(-1);
 			}
 		}
 		AdvancedDouble_Hybrid operator-(const double &obj1_double) const {
@@ -708,7 +712,8 @@ class AdvancedDouble_Hybrid{
 				}
 			}
 			else{
-				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);	
+				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);
+				exit(-1);	
 			}
 		}
 		AdvancedDouble_Hybrid operator/(const AdvancedDouble_Hybrid &obj1) const {
@@ -760,6 +765,7 @@ class AdvancedDouble_Hybrid{
 			}
 			else{
 				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);	
+				exit(-1);	
 			}
 		}
 		AdvancedDouble_Hybrid operator/(const double &obj1_double) const {
@@ -797,6 +803,7 @@ class AdvancedDouble_Hybrid{
 			}
 			else{
 				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);	
+				exit(-1);	
 			}
 		}
 		int compare(const AdvancedDouble_Hybrid &obj1) const{
@@ -830,6 +837,7 @@ class AdvancedDouble_Hybrid{
 			}
 			else{
 				printf("Unknown isBig = %c, obj1.isBig = %c\n", isBig, obj1.isBig);
+				exit(-1);	
 			}
 			//printf("comparing: ");print();printf(" and ");obj1.print();printf(" and result is %d\n",result);
 			return result;
@@ -854,6 +862,7 @@ class AdvancedDouble_Hybrid{
 			}
 			else{
 				printf("Unknown isBig = %c\n", isBig);
+				exit(-1);	
 			}
 			//printf("comparing: ");print();printf(" and %f and result is %d\n",obj1,result);
 			return result;
