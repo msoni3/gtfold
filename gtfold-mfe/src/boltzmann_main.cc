@@ -42,6 +42,7 @@ static bool ST_D2_ENABLE_ONE_SAMPLE_PARALLELIZATION = false;
 static bool ST_D2_ENABLE_SCATTER_PLOT = false;
 static bool ST_D2_ENABLE_UNIFORM_SAMPLE = false;
 static double ST_D2_UNIFORM_SAMPLE_ENERGY = 0.0;
+static int PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER = 0;//0 (default value) means decide automatically, 1 means native double, 2 means BigNum, 3 means hybrid
 static bool ST_D2_ENABLE_CHECK_FRACTION = false;
 static bool ST_D2_ENABLE_BPP_PROBABILITY = false;
 
@@ -63,7 +64,7 @@ static int num_rnd = 0;
 static int ss_verbose_global = 0;
 static int print_energy_decompose = 0;
 static int dangles=2;//making dangle default value as 2
-static double scaleFactor=0.0;
+static double scaleFactor=1.07;//default value is 1.07
 
 static bool LIMIT_DISTANCE = false;
 static int contactDistance = -1;
@@ -77,6 +78,9 @@ static void handleD2Sample();
 static void handleDsSample();
 static void handleDsPartitionFunction();
 static void handleD2PartitionFunction();
+static void decideAutomaticallyForAdvancedDoubleSpecifier();
+template <class T>
+void computeD2PartitionFunction(T pf_d2);
 
 static void print_usage() {
 	printf("Usage: gtboltzmann [OPTION]... FILE\n\n");
@@ -133,7 +137,7 @@ static void print_usage_developer_options() {
 	printf("   --sampleenergy DOUBLE      Writes only sampled structures with free energy equal to DOUBLE to file prefix.sample. Only valid in combination with --sample. Number of threads must be limited to one (-t 1).\n");
 	//printf("   --counts-parallel  While sampling structures, parallelize INT sample counts among available threads (this is also a default behaviour of sampling).\n");
 	//printf("   --parallelsample        While sampling structures, parallelize the processing of one sample (useful when sampling large sequence with number of samples being less than available threads).\n");
-	printf("   --scale DOUBLE	Use scaling facotr as DOUBLE to approximate partition function.\n");
+	printf("   --scale DOUBLE	Use scaling facotr as DOUBLE to approximate partition function, default value is 1.07.\n");
 	printf("   --parallelsample     Paralellizes the sampling of each individual structure.\n");
 	printf("			Only valid in combination with --sample.\n");
 	//printf("   -s|--sample   INT  --separatectfiles [--ctfilesdir dump_dir_path] [--summaryfile dump_summery_file_name] Sample number of structures equal to INT and dump each structure to a ct file in dump_dir_path directory (if no value provided then use current directory value for this purpose) and also create a summary file with name stochastic_summery_file_name in dump_dir_path directory (if no value provided, use stochaSampleSummary.txt value for this purpose).\n");
@@ -141,6 +145,7 @@ static void print_usage_developer_options() {
 	printf("			in the DIR directory. Also writes a summary of the sampled structures to NAME in DIR.\n");
 	printf("                        Default directory is the working directory specified with -w, and the default summary file\n");
 	printf("                       name is stochaSampleSumary.txt Only valid in combination with --sample. \n");
+	printf("   --advancedouble INT	Directs Partition Function and Sampling calculation to use advanced double with specifier INT, 1 means native double, 2 means BigNum, 3 means hybrid. If this option not used then program will decide intelligently for best one.");
 
 	printf("\nSetting default parameter directory:\n");
 	printf("\tTo run properly, GTfold requires access to a set of parameter files. If you are using one of the prepackaged binaries, you may need (or chose) to \n");
@@ -169,11 +174,11 @@ static void print_examples(){
 static void print_examples_developer_options(){
 	printf("\n\nDeveloper Options EXAMPLES:\n\n");
 	printf("1. Calculate Partition function:\n\n");
-	printf("gtboltzmann --partition [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] <seq_file>\n\n");
+	printf("gtboltzmann [--partition] [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] [--advancedouble INT] <seq_file>\n\n");
 	printf("2. Sample structures stochastically:\n\n");
-	printf("gtboltzmann [-s INT] [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] <seq_file>\n\n");
-	printf("gtboltzmann [-s INT] [[-d 0|2]|[-dS]] -t 1 [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [-e] [--checkfraction] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] <seq_file>\n\n");
-	printf("gtboltzmann -s INT --separatectfiles [--ctfilesdir dump_dir_path] [--summaryfile dump_summery_file_name] [-d 2] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] <seq_file>\n\n");
+	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--advancedouble INT] <seq_file>\n\n");
+	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] -t 1 [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [-e] [--checkfraction] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--advancedouble INT] <seq_file>\n\n");
+	printf("gtboltzmann -s INT --separatectfiles [--ctfilesdir dump_dir_path] [--summaryfile dump_summery_file_name] [-d 2] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] [--advancedouble INT] <seq_file>\n\n");
 	printf("\n\n");
 }
 
@@ -228,7 +233,11 @@ static void printRunConfiguration(string seq) {
 	if(PF_PRINT_ARRAYS_ENABLED) if(!SILENT) printf("+ partition function array print output file: %s\n", pfArraysOutFile.c_str());
 	if(print_energy_decompose==1) if(!SILENT) printf("+ energy decompose output file: %s\n", energyDecomposeOutFile.c_str());
 	if(!SILENT) printf("- scale factor: %f\n", scaleFactor);
-
+	if(!SILENT){
+		if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==1) printf("- Partition Function and Sampling calculation to use native double");
+		else if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==2) printf("- Partition Function and Sampling calculation to use BigNum");
+		else if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==3) printf("- Partition Function and Sampling calculation to use hybrid of native double and bignum");
+	}
 	printf("\n");
 }
 
@@ -386,6 +395,14 @@ static void parse_options(int argc, char** argv) {
 			} else if (strcmp(argv[i],"--pfcount") == 0) {
 				CALC_PART_FUNC = true;
 				PF_COUNT_MODE = true;
+			} else if (strcmp(argv[i], "--advancedouble") == 0) {
+				if(i+1 < argc) {
+					PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER = atoi(argv[++i]);
+					if (PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER < 1 || PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER > 3) {
+						help();  
+					}
+				} else
+					help();
 			} else if (strcmp(argv[i],"--sample") == 0 || strcmp(argv[i], "-s") == 0) {
 				RND_SAMPLE = true;
 				if(i+1 < argc){//if(i < argc)
@@ -520,6 +537,11 @@ int boltzmann_main(int argc, char** argv) {
 	g_contactDistance = contactDistance;
 
 	readThermodynamicParameters(paramDir.c_str(), PARAM_DIR, 0, 0, 0);
+
+	if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==0){
+		decideAutomaticallyForAdvancedDoubleSpecifier();
+	}
+	
 	printRunConfiguration(seq);
 
 	if (LIMIT_DISTANCE) {
@@ -532,6 +554,7 @@ int boltzmann_main(int argc, char** argv) {
 		double mfe = calculate_mfe(seq);
 		scaleFactor = scaleFactor*mfe;
 	}
+	
 
 	if (CALC_PART_FUNC == true && CALC_PF_DS == true) {
 		handleDsPartitionFunction();	
@@ -563,22 +586,71 @@ int boltzmann_main(int argc, char** argv) {
 	return EXIT_SUCCESS;
 }
 
+static void decideAutomaticallyForAdvancedDoubleSpecifier(){
+	if( seq.length()<1000 || (seq.length()>1000 && scaleFactor>=1.0) || (seq.length()>3000 && scaleFactor>=1.25)){
+		PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER=1;
+	}
+	else {
+		PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER=2;
+	}
+	//else PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER=1;
+}
+
 static void handleD2PartitionFunction(){
-	int pf_count_mode = 0;
-	if(PF_COUNT_MODE) pf_count_mode=1;
-	int no_dangle_mode = 0;
-	if(CALC_PF_DO) no_dangle_mode=1;
-	//printf("\nComputing partition function in -d2 mode ..., pf_count_mode=%d, no_dangle_mode=%d, PF_D2_UP_APPROX_ENABLED=%d\n", pf_count_mode, no_dangle_mode,PF_D2_UP_APPROX_ENABLED);
+	if( PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==1 ){
+		PartitionFunctionD2<AdvancedDouble_Native> pf_d2;
+		computeD2PartitionFunction< PartitionFunctionD2< AdvancedDouble_Native > >(pf_d2);
+	}
+	else if( PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==2 ){
+		PartitionFunctionD2<AdvancedDouble_BigNum> pf_d2;
+		computeD2PartitionFunction< PartitionFunctionD2< AdvancedDouble_BigNum > >(pf_d2);
+	}
+	else if( PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==3 ){
+		PartitionFunctionD2<AdvancedDouble_Hybrid> pf_d2;
+		computeD2PartitionFunction< PartitionFunctionD2< AdvancedDouble_Hybrid > >(pf_d2);
+	}
+}
+	
+template <class T>
+void computeD2PartitionFunction(T pf_d2){
+	 int pf_count_mode = 0;
+        if(PF_COUNT_MODE) pf_count_mode=1;
+        int no_dangle_mode = 0;
+        if(CALC_PF_DO) no_dangle_mode=1;
+        //printf("\nComputing partition function in -d2 mode ..., pf_count_mode=%d, no_dangle_mode=%d, PF_D2_UP_APPROX_ENABLED=%d\n", pf_count_mode, no_dangle_mode,PF_D2_UP_APPROX_ENABLED);
 	printf("\nComputing partition function...\n");
 	t1 = get_seconds();
 	//PartitionFunctionD2<AdvancedDouble> pf_d2;
-	PartitionFunctionD2<AdvancedDouble_Native> pf_d2;
 	pf_d2.calculate_partition(seq.length(),pf_count_mode,no_dangle_mode,PF_D2_UP_APPROX_ENABLED,scaleFactor);
 	t1 = get_seconds() - t1;
 	printf("partition function computation running time: %9.6f seconds\n", t1);
 	//calculate_partition(seq.length(),0,0);
 	if(PF_PRINT_ARRAYS_ENABLED) pf_d2.printAllMatrixesToFile(pfArraysOutFile);
 	pf_d2.free_partition();
+}
+
+static void handleD2Sample(){
+	printf("\nComputing stochastic traceback...\n");
+	int pf_count_mode = 0;
+	if(PF_COUNT_MODE) pf_count_mode=1;
+	int no_dangle_mode = 0;
+	if(CALC_PF_DO) no_dangle_mode=1;
+	StochasticTracebackD2<AdvancedDouble_Native> st_d2;
+	t1 = get_seconds();
+	st_d2.initialize(seq.length(), pf_count_mode, no_dangle_mode, print_energy_decompose, PF_D2_UP_APPROX_ENABLED,ST_D2_ENABLE_CHECK_FRACTION, energyDecomposeOutFile,scaleFactor);
+	t1 = get_seconds() - t1;
+	printf("D2 Traceback initialization (partition function computation) running time: %9.6f seconds\n", t1);
+	t1 = get_seconds();
+	if(DUMP_CT_FILE==false){
+		if(ST_D2_ENABLE_COUNTS_PARALLELIZATION && g_nthreads!=1)
+			st_d2.batch_sample_parallel(num_rnd,ST_D2_ENABLE_SCATTER_PLOT,ST_D2_ENABLE_ONE_SAMPLE_PARALLELIZATION,ST_D2_ENABLE_BPP_PROBABILITY, sampleOutFile, estimateBppOutputFile, scatterPlotOutputFile);
+		else st_d2.batch_sample(num_rnd,ST_D2_ENABLE_SCATTER_PLOT,ST_D2_ENABLE_ONE_SAMPLE_PARALLELIZATION,ST_D2_ENABLE_UNIFORM_SAMPLE,ST_D2_UNIFORM_SAMPLE_ENERGY,ST_D2_ENABLE_BPP_PROBABILITY, sampleOutFile, estimateBppOutputFile, scatterPlotOutputFile);
+	}
+	else  st_d2.batch_sample_and_dump(num_rnd, ctFileDumpDir, stochastic_summery_file_name, seq, seqfile);
+	t1 = get_seconds() - t1;
+	printf("D2 Traceback computation running time: %9.6f seconds\n", t1);
+	if(PF_PRINT_ARRAYS_ENABLED) st_d2.printPfMatrixesToFile(pfArraysOutFile);
+	st_d2.free_traceback();
 }
 
 static void handleDsPartitionFunction(){
@@ -610,30 +682,6 @@ static void handleDsSample(){
 	t1 = get_seconds() - t1;
 	printf("Traceback computation running time: %9.6f seconds\n", t1);
 	free_partition();
-}
-
-static void handleD2Sample(){
-	printf("\nComputing stochastic traceback...\n");
-	int pf_count_mode = 0;
-	if(PF_COUNT_MODE) pf_count_mode=1;
-	int no_dangle_mode = 0;
-	if(CALC_PF_DO) no_dangle_mode=1;
-	StochasticTracebackD2<AdvancedDouble_Native> st_d2;
-	t1 = get_seconds();
-	st_d2.initialize(seq.length(), pf_count_mode, no_dangle_mode, print_energy_decompose, PF_D2_UP_APPROX_ENABLED,ST_D2_ENABLE_CHECK_FRACTION, energyDecomposeOutFile,scaleFactor);
-	t1 = get_seconds() - t1;
-	printf("D2 Traceback initialization (partition function computation) running time: %9.6f seconds\n", t1);
-	t1 = get_seconds();
-	if(DUMP_CT_FILE==false){
-		if(ST_D2_ENABLE_COUNTS_PARALLELIZATION && g_nthreads!=1)
-			st_d2.batch_sample_parallel(num_rnd,ST_D2_ENABLE_SCATTER_PLOT,ST_D2_ENABLE_ONE_SAMPLE_PARALLELIZATION,ST_D2_ENABLE_BPP_PROBABILITY, sampleOutFile, estimateBppOutputFile, scatterPlotOutputFile);
-		else st_d2.batch_sample(num_rnd,ST_D2_ENABLE_SCATTER_PLOT,ST_D2_ENABLE_ONE_SAMPLE_PARALLELIZATION,ST_D2_ENABLE_UNIFORM_SAMPLE,ST_D2_UNIFORM_SAMPLE_ENERGY,ST_D2_ENABLE_BPP_PROBABILITY, sampleOutFile, estimateBppOutputFile, scatterPlotOutputFile);
-	}
-	else  st_d2.batch_sample_and_dump(num_rnd, ctFileDumpDir, stochastic_summery_file_name, seq, seqfile);
-	t1 = get_seconds() - t1;
-	printf("D2 Traceback computation running time: %9.6f seconds\n", t1);
-	if(PF_PRINT_ARRAYS_ENABLED) st_d2.printPfMatrixesToFile(pfArraysOutFile);
-	st_d2.free_traceback();
 }
 
 static void handleBpp(){
