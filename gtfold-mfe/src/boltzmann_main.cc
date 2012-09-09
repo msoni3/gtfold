@@ -79,8 +79,8 @@ static void handleDsSample();
 static void handleDsPartitionFunction();
 static void handleD2PartitionFunction();
 static void decideAutomaticallyForAdvancedDoubleSpecifier();
-template <class T>
-void computeD2PartitionFunction(T pf_d2);
+template <class T> static void computeD2PartitionFunction(T pf_d2);
+template <class T> static void computeD2Sample(T st_d2);
 
 static void print_usage() {
 	printf("Usage: gtboltzmann [OPTION]... FILE\n\n");
@@ -147,6 +147,7 @@ static void print_usage_developer_options() {
 	printf("                       name is stochaSampleSumary.txt Only valid in combination with --sample. \n");
 	printf("   --advancedouble INT	Directs Partition Function and Sampling calculation to use advanced double with specifier INT, 1 means native double, 2 means BigNum, 3 means hybrid. If this option not used then program will decide intelligently for best one.");
 
+	printf("   --bignumprecision INT	Precision to be used in case bignum(or hybrid) is used (default value is 512). Min value required is 64 and ignored in case of --advancedouble option value is 1.");
 	printf("\nSetting default parameter directory:\n");
 	printf("\tTo run properly, GTfold requires access to a set of parameter files. If you are using one of the prepackaged binaries, you may need (or chose) to \n");
 	printf("\tset the GTFOLDDATADIR environment variable to specify the directory in whihc GTfold should look to find default parameter files. In a terminal \n");
@@ -174,11 +175,11 @@ static void print_examples(){
 static void print_examples_developer_options(){
 	printf("\n\nDeveloper Options EXAMPLES:\n\n");
 	printf("1. Calculate Partition function:\n\n");
-	printf("gtboltzmann [--partition] [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] [--advancedouble INT] <seq_file>\n\n");
+	printf("gtboltzmann [--partition] [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
 	printf("2. Sample structures stochastically:\n\n");
-	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--advancedouble INT] <seq_file>\n\n");
-	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] -t 1 [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [-e] [--checkfraction] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--advancedouble INT] <seq_file>\n\n");
-	printf("gtboltzmann -s INT --separatectfiles [--ctfilesdir dump_dir_path] [--summaryfile dump_summery_file_name] [-d 2] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] [--advancedouble INT] <seq_file>\n\n");
+	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
+	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] -t 1 [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [-e] [--checkfraction] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
+	printf("gtboltzmann -s INT --separatectfiles [--ctfilesdir dump_dir_path] [--summaryfile dump_summery_file_name] [-d 2] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
 	printf("\n\n");
 }
 
@@ -234,10 +235,11 @@ static void printRunConfiguration(string seq) {
 	if(print_energy_decompose==1) if(!SILENT) printf("+ energy decompose output file: %s\n", energyDecomposeOutFile.c_str());
 	if(!SILENT) printf("- scale factor: %f\n", scaleFactor);
 	if(!SILENT){
-		if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==1) printf("- Partition Function and Sampling calculation to use native double");
-		else if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==2) printf("- Partition Function and Sampling calculation to use BigNum");
-		else if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==3) printf("- Partition Function and Sampling calculation to use hybrid of native double and bignum");
+		if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==1) printf("- Partition Function and Sampling calculation to use: native double\n");
+		else if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==2) printf("+ Partition Function and Sampling calculation to use: BigNum\n");
+		else if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==3) printf("+ Partition Function and Sampling calculation to use: hybrid of native double and bignum\n");
 	}
+	if(!SILENT) if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==2 || PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==3) printf("- bignum precision: %d\n ", g_bignumprecision);
 	printf("\n");
 }
 
@@ -322,11 +324,20 @@ static void parse_options(int argc, char** argv) {
 					help();
 				}
 			} else if(strcmp(argv[i], "--threads") == 0 || strcmp(argv[i], "-t") == 0) {
-				if(i < argc){
+				if(i+1 < argc){
 					g_nthreads = atoi(argv[++i]);
 				}
 				else help();
-			} else if(strcmp(argv[i], "--output") == 0 || strcmp(argv[i], "-o") == 0) {
+			} else if(strcmp(argv[i], "--bignumprecision") == 0 ) {
+                                if(i+1 < argc){
+                                        g_bignumprecision = atoi(argv[++i]);
+					if(g_bignumprecision<64){
+						printf("Error: Min value of bignumprecision required is 64, exiting..");
+						help();
+					}
+                                }
+                                else help();
+                        } else if(strcmp(argv[i], "--output") == 0 || strcmp(argv[i], "-o") == 0) {
 				if(i < argc)
 					outputPrefix = argv[++i];
 				else
@@ -612,7 +623,7 @@ static void handleD2PartitionFunction(){
 }
 	
 template <class T>
-void computeD2PartitionFunction(T pf_d2){
+static void computeD2PartitionFunction(T pf_d2){
 	 int pf_count_mode = 0;
         if(PF_COUNT_MODE) pf_count_mode=1;
         int no_dangle_mode = 0;
@@ -630,12 +641,27 @@ void computeD2PartitionFunction(T pf_d2){
 }
 
 static void handleD2Sample(){
+	if( PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==1 ){
+		StochasticTracebackD2<AdvancedDouble_Native> st_d2;
+        	computeD2Sample< StochasticTracebackD2< AdvancedDouble_Native > >(st_d2);
+        }
+        else if( PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==2 ){
+		StochasticTracebackD2<AdvancedDouble_BigNum> st_d2;
+        	computeD2Sample< StochasticTracebackD2< AdvancedDouble_BigNum > >(st_d2);
+        }
+        else if( PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==3 ){
+		StochasticTracebackD2<AdvancedDouble_Hybrid> st_d2;
+        	computeD2Sample< StochasticTracebackD2< AdvancedDouble_Hybrid > >(st_d2);
+        }
+}
+
+template <class T>
+static void computeD2Sample(T st_d2){
 	printf("\nComputing stochastic traceback...\n");
 	int pf_count_mode = 0;
 	if(PF_COUNT_MODE) pf_count_mode=1;
 	int no_dangle_mode = 0;
 	if(CALC_PF_DO) no_dangle_mode=1;
-	StochasticTracebackD2<AdvancedDouble_Native> st_d2;
 	t1 = get_seconds();
 	st_d2.initialize(seq.length(), pf_count_mode, no_dangle_mode, print_energy_decompose, PF_D2_UP_APPROX_ENABLED,ST_D2_ENABLE_CHECK_FRACTION, energyDecomposeOutFile,scaleFactor);
 	t1 = get_seconds() - t1;
@@ -652,6 +678,7 @@ static void handleD2Sample(){
 	if(PF_PRINT_ARRAYS_ENABLED) st_d2.printPfMatrixesToFile(pfArraysOutFile);
 	st_d2.free_traceback();
 }
+
 
 static void handleDsPartitionFunction(){
 	int pf_count_mode = 0;

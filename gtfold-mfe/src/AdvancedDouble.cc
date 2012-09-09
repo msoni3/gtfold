@@ -8,7 +8,7 @@
 #include "gmp.h"
 using namespace std;
 
-const int PRECISION = 1024;
+extern int g_bignumprecision;
 const int PRINT_DIGITS_AFTER_DECIMAL = 10;
 
 class AdvancedDouble_Native{
@@ -164,7 +164,7 @@ class AdvancedDouble_BigNum{
 		void createBigNum(){
 			if(bigValue==0){
 				bigValue = new mpf_t[1];
-				mpf_init2(*bigValue,PRECISION);
+				mpf_init2(*bigValue,g_bignumprecision);
 			}
 		}
 		void createBigNum(mpf_t val2){
@@ -172,7 +172,7 @@ class AdvancedDouble_BigNum{
 			mpf_set(*bigValue, val2);
 		}
 		void createBigNum(double val2){
-			mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, val2);
+			mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, val2);
 			createBigNum(op2);
 			mpf_clear(op2);
 		}
@@ -355,7 +355,7 @@ class AdvancedDouble_Hybrid{
 			isBig = 'y';
 			if(bigValue==0){
 				bigValue = new mpf_t[1];
-				mpf_init2(*bigValue,PRECISION);
+				mpf_init2(*bigValue,g_bignumprecision);
 			}
 		}
 		void createDouble(){
@@ -373,16 +373,16 @@ class AdvancedDouble_Hybrid{
 			if(bigValue==0){
 				//if(verbose==1)printf("Allocation mpf_t\n");
 				bigValue = new mpf_t[1];
-				mpf_init2(*bigValue,PRECISION);//TODO This line was earlier outside this "if"
+				mpf_init2(*bigValue,g_bignumprecision);//TODO This line was earlier outside this "if"
 			}
-			//mpf_init2(*bigValue,PRECISION);
+			//mpf_init2(*bigValue,g_bignumprecision);
 			mpf_set(*bigValue, val2);//value=val2;
 			//mpf_clear(val2);//Do not un-comment this line, this line will cause errors
 		}
 		void createDouble(double val2){
 			//bigValue = 0;
 			/*if(BIGNUM_ONLY==1){
-			  mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, val2);
+			  mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, val2);
 			  createBigNum(op2);
 			  mpf_clear(op2);
 			  return;
@@ -456,7 +456,7 @@ class AdvancedDouble_Hybrid{
 			else if(this->isBig=='y' && obj1.isBig=='n'){
 				AdvancedDouble_Hybrid res;
 				res.createBigNum();
-				mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+				mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 				mpf_mul(*(res.bigValue),*(this->bigValue), op2);
 				mpf_clear(op2);
 				return res;
@@ -465,7 +465,7 @@ class AdvancedDouble_Hybrid{
 			else if(this->isBig=='n' && obj1.isBig=='y'){
 				AdvancedDouble_Hybrid res;
 				res.createBigNum();
-				mpf_t op1; mpf_init2(op1,PRECISION); mpf_set_d(op1, *(this->smallValue));
+				mpf_t op1; mpf_init2(op1,g_bignumprecision); mpf_set_d(op1, *(this->smallValue));
 				mpf_mul(*(res.bigValue),op1, *(obj1.bigValue));
 				mpf_clear(op1);
 				return res;
@@ -481,8 +481,8 @@ class AdvancedDouble_Hybrid{
 				else{
 					AdvancedDouble_Hybrid res;
 					res.createBigNum();
-					mpf_t op1; mpf_init2(op1,PRECISION); mpf_set_d(op1, *(this->smallValue));
-					mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+					mpf_t op1; mpf_init2(op1,g_bignumprecision); mpf_set_d(op1, *(this->smallValue));
+					mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 					mpf_mul(*(res.bigValue),op1, op2);
 					mpf_clear(op1);
 					mpf_clear(op2);
@@ -501,7 +501,7 @@ class AdvancedDouble_Hybrid{
 			if(this->isBig=='y'){
 				AdvancedDouble_Hybrid res;
 				res.createBigNum();
-				mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+				mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 				mpf_mul(*(res.bigValue),*(this->bigValue), op2);
 				mpf_clear(op2);
 				return res;
@@ -518,8 +518,8 @@ class AdvancedDouble_Hybrid{
 				else{
 					AdvancedDouble_Hybrid res;
 					res.createBigNum();
-					mpf_t op1; mpf_init2(op1,PRECISION); mpf_set_d(op1, *(this->smallValue));
-					mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+					mpf_t op1; mpf_init2(op1,g_bignumprecision); mpf_set_d(op1, *(this->smallValue));
+					mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 					mpf_mul(*(res.bigValue),op1, op2);
 					//res.print();
 					mpf_clear(op1);
@@ -546,7 +546,7 @@ class AdvancedDouble_Hybrid{
 			else if(this->isBig=='y' && obj1.isBig=='n'){
 				AdvancedDouble_Hybrid res;
 				res.createBigNum();
-				mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+				mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 				mpf_add(*(res.bigValue),*(this->bigValue), op2);
 				mpf_clear(op2);
 				return res;
@@ -555,7 +555,7 @@ class AdvancedDouble_Hybrid{
 			else if(this->isBig=='n' && obj1.isBig=='y'){
 				AdvancedDouble_Hybrid res;
 				res.createBigNum();
-				mpf_t op1; mpf_init2(op1,PRECISION); mpf_set_d(op1, *(this->smallValue));
+				mpf_t op1; mpf_init2(op1,g_bignumprecision); mpf_set_d(op1, *(this->smallValue));
 				mpf_add(*(res.bigValue),op1, *(obj1.bigValue));
 				mpf_clear(op1);
 				return res;
@@ -572,8 +572,8 @@ class AdvancedDouble_Hybrid{
 				else{
 					AdvancedDouble_Hybrid res;
 					res.createBigNum();
-					mpf_t op1; mpf_init2(op1,PRECISION); mpf_set_d(op1, *(this->smallValue));
-					mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+					mpf_t op1; mpf_init2(op1,g_bignumprecision); mpf_set_d(op1, *(this->smallValue));
+					mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 					mpf_add(*(res.bigValue),op1, op2);
 					//res.print();
 					mpf_clear(op1);mpf_clear(op2);
@@ -594,7 +594,7 @@ class AdvancedDouble_Hybrid{
 			if(this->isBig=='y'){
 				AdvancedDouble_Hybrid res;
 				res.createBigNum();
-				mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+				mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 				mpf_add(*(res.bigValue),*(this->bigValue), op2);
 				mpf_clear(op2);
 				return res;
@@ -611,8 +611,8 @@ class AdvancedDouble_Hybrid{
 				else{
 					AdvancedDouble_Hybrid res;
 					res.createBigNum();
-					mpf_t op1; mpf_init2(op1,PRECISION); mpf_set_d(op1, *(this->smallValue));
-					mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+					mpf_t op1; mpf_init2(op1,g_bignumprecision); mpf_set_d(op1, *(this->smallValue));
+					mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 					mpf_add(*(res.bigValue),op1, op2);
 					//res.print();
 					mpf_clear(op1);
@@ -638,7 +638,7 @@ class AdvancedDouble_Hybrid{
 			else if(this->isBig=='y' && obj1.isBig=='n'){
 				AdvancedDouble_Hybrid res;
 				res.createBigNum();
-				mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+				mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 				mpf_sub(*(res.bigValue),*(this->bigValue), op2);
 				mpf_clear(op2);
 				return res;
@@ -647,7 +647,7 @@ class AdvancedDouble_Hybrid{
 			else if(this->isBig=='n' && obj1.isBig=='y'){
 				AdvancedDouble_Hybrid res;
 				res.createBigNum();
-				mpf_t op1; mpf_init2(op1,PRECISION); mpf_set_d(op1, *(this->smallValue));
+				mpf_t op1; mpf_init2(op1,g_bignumprecision); mpf_set_d(op1, *(this->smallValue));
 				mpf_sub(*(res.bigValue),op1, *(obj1.bigValue));
 				mpf_clear(op1);
 				return res;
@@ -664,8 +664,8 @@ class AdvancedDouble_Hybrid{
 				else{
 					AdvancedDouble_Hybrid res;
 					res.createBigNum();
-					mpf_t op1; mpf_init2(op1,PRECISION); mpf_set_d(op1, *(this->smallValue));
-					mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+					mpf_t op1; mpf_init2(op1,g_bignumprecision); mpf_set_d(op1, *(this->smallValue));
+					mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 					mpf_sub(*(res.bigValue),op1, op2);
 					//res.print();
 					mpf_clear(op1);mpf_clear(op2);
@@ -685,7 +685,7 @@ class AdvancedDouble_Hybrid{
 			if(this->isBig=='y'){
 				AdvancedDouble_Hybrid res;
 				res.createBigNum();
-				mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+				mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 				mpf_sub(*(res.bigValue),*(this->bigValue), op2);
 				mpf_clear(op2);
 				return res;
@@ -702,8 +702,8 @@ class AdvancedDouble_Hybrid{
 				else{
 					AdvancedDouble_Hybrid res;
 					res.createBigNum();
-					mpf_t op1; mpf_init2(op1,PRECISION); mpf_set_d(op1, *(this->smallValue));
-					mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+					mpf_t op1; mpf_init2(op1,g_bignumprecision); mpf_set_d(op1, *(this->smallValue));
+					mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 					mpf_sub(*(res.bigValue),op1, op2);
 					//res.print();
 					mpf_clear(op1);mpf_clear(op2);
@@ -728,7 +728,7 @@ class AdvancedDouble_Hybrid{
 			else if(this->isBig=='y' && obj1.isBig=='n'){
 				AdvancedDouble_Hybrid res;
 				res.createBigNum();
-				mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+				mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 				mpf_div(*(res.bigValue),*(this->bigValue), op2);
 				mpf_clear(op2);
 				return res;
@@ -737,7 +737,7 @@ class AdvancedDouble_Hybrid{
 			else if(this->isBig=='n' && obj1.isBig=='y'){
 				AdvancedDouble_Hybrid res;
 				res.createBigNum();
-				mpf_t op1; mpf_init2(op1,PRECISION); mpf_set_d(op1, *(this->smallValue));
+				mpf_t op1; mpf_init2(op1,g_bignumprecision); mpf_set_d(op1, *(this->smallValue));
 				mpf_div(*(res.bigValue),op1, *(obj1.bigValue));
 				mpf_clear(op1);
 				return res;
@@ -754,8 +754,8 @@ class AdvancedDouble_Hybrid{
 				else{
 					AdvancedDouble_Hybrid res;
 					res.createBigNum();
-					mpf_t op1; mpf_init2(op1,PRECISION); mpf_set_d(op1, *(this->smallValue));
-					mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+					mpf_t op1; mpf_init2(op1,g_bignumprecision); mpf_set_d(op1, *(this->smallValue));
+					mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 					mpf_div(*(res.bigValue),op1, op2);
 					//res.print();
 					mpf_clear(op1);mpf_clear(op2);
@@ -775,7 +775,7 @@ class AdvancedDouble_Hybrid{
 			if(this->isBig=='y'){
 				AdvancedDouble_Hybrid res;
 				res.createBigNum();
-				mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+				mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 				mpf_div(*(res.bigValue),*(this->bigValue), op2);
 				mpf_clear(op2);
 				return res;
@@ -792,8 +792,8 @@ class AdvancedDouble_Hybrid{
 				else{
 					AdvancedDouble_Hybrid res;
 					res.createBigNum();
-					mpf_t op1; mpf_init2(op1,PRECISION); mpf_set_d(op1, *(this->smallValue));
-					mpf_t op2; mpf_init2(op2,PRECISION); mpf_set_d(op2, *(obj1.smallValue));
+					mpf_t op1; mpf_init2(op1,g_bignumprecision); mpf_set_d(op1, *(this->smallValue));
+					mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, *(obj1.smallValue));
 					mpf_div(*(res.bigValue),op1, op2);
 					//res.print();
 					mpf_clear(op1);mpf_clear(op2);
@@ -822,7 +822,7 @@ class AdvancedDouble_Hybrid{
 			}
 			//case 3: this object is smallValue and obj2 is bigValue
 			else if(this->isBig=='n' && obj1.isBig=='y'){
-				//mpf_t minusOne; mpf_init2(minusOne,PRECISION); mpf_set_d(minusOne, -1.0);
+				//mpf_t minusOne; mpf_init2(minusOne,g_bignumprecision); mpf_set_d(minusOne, -1.0);
 				//return mpf_mul(mpf_cmp_d(*(obj1.bigValue), *(this->smallValue)), minusOne);
 				//return -1*(mpf_cmp_d(*(obj1.bigValue), *(this->smallValue)));
 				result = -1*(mpf_cmp_d(*(obj1.bigValue), *(this->smallValue)));
