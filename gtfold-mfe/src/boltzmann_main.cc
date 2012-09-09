@@ -145,9 +145,11 @@ static void print_usage_developer_options() {
 	printf("			in the DIR directory. Also writes a summary of the sampled structures to NAME in DIR.\n");
 	printf("                        Default directory is the working directory specified with -w, and the default summary file\n");
 	printf("                       name is stochaSampleSumary.txt Only valid in combination with --sample. \n");
-	printf("   --advancedouble INT	Directs Partition Function and Sampling calculation to use advanced double with specifier INT, 1 means native double, 2 means BigNum, 3 means hybrid. If this option not used then program will decide intelligently for best one.");
-
-	printf("   --bignumprecision INT	Precision to be used in case bignum(or hybrid) is used (default value is 512). Min value required is 64 and ignored in case of --advancedouble option value is 1.");
+	printf("   --advancedouble INT	Directs Partition Function and Sampling calculation to use advanced double with specifier INT,\n");
+	printf("			1 means native double, 2 means BigNum, 3 means hybrid.\n");
+	printf("			If this option not used then program will decide intelligently for best one.\n");
+	printf("   --bignumprecision INT	Precision to be used in case bignum(or hybrid) is used (default value is 512).\n");
+	printf("			Min value required is 64 and ignored in case of --advancedouble option value is 1.\n");
 	printf("\nSetting default parameter directory:\n");
 	printf("\tTo run properly, GTfold requires access to a set of parameter files. If you are using one of the prepackaged binaries, you may need (or chose) to \n");
 	printf("\tset the GTFOLDDATADIR environment variable to specify the directory in whihc GTfold should look to find default parameter files. In a terminal \n");
@@ -175,11 +177,11 @@ static void print_examples(){
 static void print_examples_developer_options(){
 	printf("\n\nDeveloper Options EXAMPLES:\n\n");
 	printf("1. Calculate Partition function:\n\n");
-	printf("gtboltzmann [--partition] [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
+	printf("gtboltzmann [--partition] [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] [--scale DOUBLE] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
 	printf("2. Sample structures stochastically:\n\n");
-	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
-	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] -t 1 [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [-e] [--checkfraction] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
-	printf("gtboltzmann -s INT --separatectfiles [--ctfilesdir dump_dir_path] [--summaryfile dump_summery_file_name] [-d 2] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
+	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--scale DOUBLE] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
+	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] -t 1 [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [-e] [--checkfraction] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--scale DOUBLE] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
+	printf("gtboltzmann -s INT --separatectfiles [--ctfilesdir dump_dir_path] [--summaryfile dump_summery_file_name] [-d 2] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] [--scale DOUBLE] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
 	printf("\n\n");
 }
 
