@@ -62,7 +62,7 @@ class PartitionFunctionD2{
 		//void printMatrix(MyDouble** u, int part_len);
 		void printMatrix(MyDouble** u, int part_len, FILE* pfarraysoutputfile);//pfarraysoutputfile can be stdin in order to make it to print to standard output
 	public:
-		PartitionFunctionD2(){}
+		PartitionFunctionD2();
 		//Functions providing general utilities related to energy
 		MyDouble myExp(double arg);
 		double ED3_new(int i, int j, int k);

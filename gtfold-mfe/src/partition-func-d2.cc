@@ -305,6 +305,24 @@ void PartitionFunctionD2<MyDouble>::printAllMatrixesToFile(string pfArraysOutput
 
 
 }
+
+template<class MyDouble>
+PartitionFunctionD2<MyDouble>::PartitionFunctionD2(){
+	PF_D2_UP_APPROX_ENABLED=true;
+	u=0;
+	up=0;
+	upm=0;
+	s1=0;
+	s2=0;
+	s3=0;
+	u1=0;
+	M_RT=0.0;
+	part_len=0;
+	PF_COUNT_MODE_=0;
+	NO_DANGLE_MODE_=0;
+}
+
+
 template<class MyDouble>
 MyDouble PartitionFunctionD2<MyDouble>::calculate_partition(int len, int pf_count_mode, int no_dangle_mode, bool PF_D2_UP_APPROX_ENABLED1, double scaleFactor)
 {
