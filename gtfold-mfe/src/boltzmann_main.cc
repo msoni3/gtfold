@@ -61,7 +61,7 @@ static string ctFileDumpDir = "";
 static string stochastic_summery_file_name = "stochaSampleSummary.txt";
 
 static int num_rnd = 0;
-static int ss_verbose_global = 0;
+//static int ss_verbose_global = 0;
 static int print_energy_decompose = 0;
 static int dangles=2;//making dangle default value as 2
 static double scaleFactor=1.07;//default value is 1.07
