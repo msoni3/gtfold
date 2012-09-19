@@ -693,7 +693,8 @@ void PartitionFunctionD2<MyDouble>::calc_u1(int i, int j){
 	MyDouble quadraticSum(0.0);
 	//for(h=i+1; h<j; ++h){//OLD
 	for(h=i; h<j; ++h){//NEW, suggested by Shel
-		quadraticSum = quadraticSum + (get_s3(h,j) * myExp(((-1)*(c+(h-i)*(b-M_RT)))/RT));
+		//quadraticSum = quadraticSum + (get_s3(h,j) * myExp(((-1)*(c+(h-i)*(b-M_RT)))/RT));
+		quadraticSum = quadraticSum + (get_s3(h,j) * myExp(((-1)*(b+(h-i)*(c-M_RT)))/RT));//Manoj111
 	}
 	set_u1(i, j, quadraticSum);
 }
@@ -711,7 +712,8 @@ void PartitionFunctionD2<MyDouble>::calc_u(int i, int j)
 	}
 	//for (ctr = i+1; ctr < j-1; ++ctr) {//Shel's doc
 	for (ctr = i; ctr < j-1; ++ctr) {//TODO Manoj corrected it
-		uval = uval + get_s1(ctr,j);
+		//uval = uval + get_s1(ctr,j);
+		uval = uval + get_s1(ctr,j)*myExp(M_RT*(h-i)/RT);//Manoj111
 	}
 	set_u(i, j, uval);
 }
@@ -756,8 +758,8 @@ void PartitionFunctionD2<MyDouble>::calc_up_serial_and_approximate(int i, int j)
         {
         	if (g_LIMIT_DISTANCE && j-i > g_contactDistance){
 				set_up(i,j,0.0);
-			}
-			else {
+		}
+		else {
                 int p,q;
                 //for (p = i+1; p <= MIN(j-2-TURN,i+MAXLOOP+1) ; p++) {
                 for (p = i+1; p <= j-2-TURN ; p++) {
