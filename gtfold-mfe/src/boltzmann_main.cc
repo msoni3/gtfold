@@ -554,6 +554,9 @@ int boltzmann_main(int argc, char** argv) {
 	if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==0){
 		decideAutomaticallyForAdvancedDoubleSpecifier();
 	}
+	if(PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==2 || PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==3){
+		mpf_set_default_prec(g_bignumprecision);
+	}
 	
 	printRunConfiguration(seq);
 
