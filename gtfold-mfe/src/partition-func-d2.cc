@@ -333,8 +333,9 @@ MyDouble PartitionFunctionD2<MyDouble>::calculate_partition(int len, int pf_coun
 	//partition function scaling parameters
 	double mfe=1.0;//TODO here I am assuming scaleFactor is actually scaleFactor*mfe input by the user
 	//cout<<"In Partition Function, scale factor = "<<scaleFactor<<endl;
+	//M_RT = (-1)*(scaleFactor*mfe*100)/part_len;//ViennaRNA does multiple with -1
 	M_RT = (scaleFactor*mfe*100)/part_len;
-
+	cout<<"Actual Scaling Factor exp((scaleFactor*mfe*100)/(RT*part_len))="<<exp(M_RT/RT)<<endl;
 	//OPTIMIZED CODE STARTS
         #ifdef _OPENMP
         if (g_nthreads > 0) omp_set_num_threads(g_nthreads);
