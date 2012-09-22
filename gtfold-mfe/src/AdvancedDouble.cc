@@ -444,7 +444,8 @@ class AdvancedDouble_BigNumOptimized{
 			mpf_div(res.bigValue,this->bigValue, res.bigValue);
 			return res;
 		}
-		int compare(const AdvancedDouble_BigNumOptimized &obj1) const{
+
+		/*int compare(const AdvancedDouble_BigNumOptimized &obj1) const{
 			return mpf_cmp(this->bigValue, obj1.bigValue);
 		}
 		int compare(const double &obj1) const{
@@ -485,7 +486,46 @@ class AdvancedDouble_BigNumOptimized{
                 }
                 bool operator>=(const double &obj1) const {
                         return compare(obj1)>=0;
+                }*/
+
+		bool operator==(const AdvancedDouble_BigNumOptimized &obj1) const {
+                        return mpf_cmp(this->bigValue, obj1.bigValue)==0;
                 }
+                bool operator==(const double &obj1) const {
+                        return mpf_cmp_d(this->bigValue, obj1)==0;
+                }
+                bool operator!=(const AdvancedDouble_BigNumOptimized &obj1) const {
+                        return mpf_cmp(this->bigValue, obj1.bigValue)!=0;
+                }
+                bool operator!=(const double &obj1) const {
+                        return mpf_cmp_d(this->bigValue, obj1)!=0;
+                }
+                bool operator<(const AdvancedDouble_BigNumOptimized &obj1) const {
+                        return mpf_cmp(this->bigValue, obj1.bigValue)<0;
+                }
+                bool operator<(const double &obj1) const {
+                        return mpf_cmp_d(this->bigValue, obj1)<0;
+                }
+                bool operator>(const AdvancedDouble_BigNumOptimized &obj1) const {
+                        return mpf_cmp(this->bigValue, obj1.bigValue)>0;
+                }
+                bool operator>(const double &obj1) const {
+                        return mpf_cmp_d(this->bigValue, obj1)>0;
+                }
+                bool operator<=(const AdvancedDouble_BigNumOptimized &obj1) const {
+                        return mpf_cmp(this->bigValue, obj1.bigValue)<=0;
+                }
+                bool operator<=(const double &obj1) const {
+                        return mpf_cmp_d(this->bigValue, obj1)<=0;
+                }
+                bool operator>=(const AdvancedDouble_BigNumOptimized &obj1) const {
+                        return mpf_cmp(this->bigValue, obj1.bigValue)>=0;
+                }
+                bool operator>=(const double &obj1) const {
+                        return mpf_cmp_d(this->bigValue, obj1)>=0;
+                }
+
+
 		AdvancedDouble_BigNumOptimized& operator=(const AdvancedDouble_BigNumOptimized &obj1) {
 			if(this==&obj1) return *this;
 			//if(isInitialized())this->deallocate();//TODO
