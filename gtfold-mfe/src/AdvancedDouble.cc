@@ -525,7 +525,6 @@ class AdvancedDouble_BigNumOptimized{
                         return mpf_cmp_d(this->bigValue, obj1)>=0;
                 }
 
-
 		AdvancedDouble_BigNumOptimized& operator=(const AdvancedDouble_BigNumOptimized &obj1) {
 			if(this==&obj1) return *this;
 			//if(isInitialized())this->deallocate();//TODO
