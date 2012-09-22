@@ -58,43 +58,43 @@ void PartitionFunctionD2<MyDouble>::printMatrix(MyDouble** u, int part_len, FILE
 //Functions to retrieve partition function array entries
 //operator == varified with MyDouble
 template<class MyDouble>
-MyDouble PartitionFunctionD2<MyDouble>::get_u(int i, int j) {
+inline MyDouble PartitionFunctionD2<MyDouble>::get_u(int i, int j) {
 	//if(u[i][j]==-1.0) errorAndExit("get_u entry is -1.",i,j,MyDouble(-1.0),MyDouble(0.0)); 
 	return u[i][j];
 }
 
 template<class MyDouble>
-MyDouble PartitionFunctionD2<MyDouble>::get_up(int i, int j) {
+inline MyDouble PartitionFunctionD2<MyDouble>::get_up(int i, int j) {
 	//if(up[i][j]==-1.0) errorAndExit("get_up entry is -1.\n",i,j,MyDouble(-1.0),MyDouble(0.0)); 
 	return up[i][j];
 }
 
 template<class MyDouble>
-MyDouble PartitionFunctionD2<MyDouble>::get_upm(int i, int j) {
+inline MyDouble PartitionFunctionD2<MyDouble>::get_upm(int i, int j) {
 	//if(upm[i][j]==-1.0) errorAndExit("get_upm entry is -1.\n",i,j,MyDouble(-1.0),MyDouble(0.0));
 	return upm[i][j];
 }
 
 template<class MyDouble>
-MyDouble PartitionFunctionD2<MyDouble>::get_u1(int i, int j) {
+inline MyDouble PartitionFunctionD2<MyDouble>::get_u1(int i, int j) {
 	//if(u1[i][j]==-1.0) errorAndExit("get_u1 entry is -1.\n",i,j,MyDouble(-1.0),MyDouble(0.0));
 	return u1[i][j];
 }
 
 template<class MyDouble>
-MyDouble PartitionFunctionD2<MyDouble>::get_s1(int i, int j) {
+inline MyDouble PartitionFunctionD2<MyDouble>::get_s1(int i, int j) {
 	//if(s1[i][j]==-1.0) errorAndExit("get_s1 entry is -1.\n",i,j,MyDouble(-1.0),MyDouble(0.0)); 
 	return s1[i][j];
 }
 
 template<class MyDouble>
-MyDouble PartitionFunctionD2<MyDouble>::get_s2(int i, int j) {
+inline MyDouble PartitionFunctionD2<MyDouble>::get_s2(int i, int j) {
 	//if(s2[i][j]==-1.0) errorAndExit("get_s2 entry is -1.\n",i,j,MyDouble(-1.0),MyDouble(0.0));
 	return s2[i][j];
 }
 
 template<class MyDouble>
-MyDouble PartitionFunctionD2<MyDouble>::get_s3(int i, int j) {
+inline MyDouble PartitionFunctionD2<MyDouble>::get_s3(int i, int j) {
 	//if(s3[i][j]==-1.0) errorAndExit("get_s3 entry is -1.\n",i,j,MyDouble(-1.0),MyDouble(0.0)); 
 	return s3[i][j];
 }
@@ -102,43 +102,43 @@ MyDouble PartitionFunctionD2<MyDouble>::get_s3(int i, int j) {
 //Functions to set partition function array entries
 //operator != varified with MyDouble
 template<class MyDouble>
-void PartitionFunctionD2<MyDouble>::set_u(int i, int j, MyDouble val) {
+inline void PartitionFunctionD2<MyDouble>::set_u(int i, int j, MyDouble val) {
 	//if(u[i][j]!=-1 && u[i][j]!=val) errorAndExit("set_u entry is not -1.\n",i,j,u[i][j],val);
 	u[i][j]=val;
 }
 
 template<class MyDouble>
-void PartitionFunctionD2<MyDouble>::set_up(int i, int j, MyDouble val) {
+inline void PartitionFunctionD2<MyDouble>::set_up(int i, int j, MyDouble val) {
 	//if(up[i][j]!=-1 && up[i][j]!=val) errorAndExit("set_up entry is not -1.\n",i,j,up[i][j],val);
 	up[i][j]=val;
 }
 
 template<class MyDouble>
-void PartitionFunctionD2<MyDouble>::set_upm(int i, int j, MyDouble val) {
+inline void PartitionFunctionD2<MyDouble>::set_upm(int i, int j, MyDouble val) {
 	//if(upm[i][j]!=-1 && upm[i][j]!=val) errorAndExit("set_upm entry is not -1.\n",i,j,upm[i][j],val);
 	upm[i][j]=val;
 }
 
 template<class MyDouble>
-void PartitionFunctionD2<MyDouble>::set_u1(int i, int j, MyDouble val) {
+inline void PartitionFunctionD2<MyDouble>::set_u1(int i, int j, MyDouble val) {
 	//if(u1[i][j]!=-1 && u1[i][j]!=val) errorAndExit("set_u1 entry is not -1.\n",i,j,u1[i][j],val);
 	u1[i][j]=val;
 }
 
 template<class MyDouble>
-void PartitionFunctionD2<MyDouble>::set_s1(int i, int j, MyDouble val) {
+inline void PartitionFunctionD2<MyDouble>::set_s1(int i, int j, MyDouble val) {
 	//if(s1[i][j]!=-1 && s1[i][j]!=val) errorAndExit("set_s1 entry is not -1.\n",i,j,s1[i][j],val);
 	s1[i][j]=val;
 }
 
 template<class MyDouble>
-void PartitionFunctionD2<MyDouble>::set_s2(int i, int j, MyDouble val) {
+inline void PartitionFunctionD2<MyDouble>::set_s2(int i, int j, MyDouble val) {
 	//if(s2[i][j]!=-1 && s2[i][j]!=val) errorAndExit("set_s2 entry is not -1.\n",i,j,s2[i][j],val); 
 	s2[i][j]=val;
 }
 
 template<class MyDouble>
-void PartitionFunctionD2<MyDouble>::set_s3(int i, int j, MyDouble val) {
+inline void PartitionFunctionD2<MyDouble>::set_s3(int i, int j, MyDouble val) {
 	//if(s3[i][j]!=-1 && s3[i][j]!=val) errorAndExit("set_s3 entry is not -1.\n",i,j,s3[i][j],val); 
 	s3[i][j]=val;
 }
@@ -171,33 +171,33 @@ inline void set_s3(int i, int j, double val) {s3[i][j]=val;}
 //Functions providing general utilities related to energy
 
 template<class MyDouble>
-double PartitionFunctionD2<MyDouble>::get_M_RT(){
+inline double PartitionFunctionD2<MyDouble>::get_M_RT(){
 	return M_RT;
 }
 
 template<class MyDouble>
-double PartitionFunctionD2<MyDouble>::eS_new(int i, int j){
+inline double PartitionFunctionD2<MyDouble>::eS_new(int i, int j){
 	if(PF_COUNT_MODE_) return 0;
 	return eS(i,j);
 	//return eS(i,j)/100;
 }
 
 template<class MyDouble>
-double PartitionFunctionD2<MyDouble>::eH_new(int i, int j){
+inline double PartitionFunctionD2<MyDouble>::eH_new(int i, int j){
 	if(PF_COUNT_MODE_) return 0;
 	return eH(i,j);
 	//return eH(i,j)/100;
 }
 
 template<class MyDouble>
-double PartitionFunctionD2<MyDouble>::eL_new(int i, int j, int p, int q){
+inline double PartitionFunctionD2<MyDouble>::eL_new(int i, int j, int p, int q){
 	if(PF_COUNT_MODE_) return 0;
 	return eL(i,j,p,q);
 	//return eL(i,j,p,q)/100;
 }
 
 template<class MyDouble>
-double PartitionFunctionD2<MyDouble>::ED3_new(int i, int j, int k){
+inline double PartitionFunctionD2<MyDouble>::ED3_new(int i, int j, int k){
 	if(NO_DANGLE_MODE_) return 0;
 	if(PF_COUNT_MODE_) return 0;
 	//if(k > part_len) return 0;//This is to take care of round robin way of d2, this is shel's suggestion and rnafold also seems to follow this
@@ -207,7 +207,7 @@ double PartitionFunctionD2<MyDouble>::ED3_new(int i, int j, int k){
 }
 
 template<class MyDouble>
-double PartitionFunctionD2<MyDouble>::ED5_new(int i, int j, int k){
+inline double PartitionFunctionD2<MyDouble>::ED5_new(int i, int j, int k){
 	if(NO_DANGLE_MODE_) return 0;
 	if(PF_COUNT_MODE_) return 0;
 	//if (k<1) return 0;//This is to take care of round robin way of d2, this is shel's suggestion and rnafold also seems to follow this
@@ -217,35 +217,35 @@ double PartitionFunctionD2<MyDouble>::ED5_new(int i, int j, int k){
 }
 
 template<class MyDouble>
-double PartitionFunctionD2<MyDouble>::EA_new(){
+inline double PartitionFunctionD2<MyDouble>::EA_new(){
 	if(PF_COUNT_MODE_) return 0;
 	return Ea;
 	//return Ea/100;
 }
 
 template<class MyDouble>
-double PartitionFunctionD2<MyDouble>::EB_new(){
+inline double PartitionFunctionD2<MyDouble>::EB_new(){
 	if(PF_COUNT_MODE_) return 0;
 	return Ec;
 	//return Ec/100;
 }
 
 template<class MyDouble>
-double PartitionFunctionD2<MyDouble>::EC_new(){
+inline double PartitionFunctionD2<MyDouble>::EC_new(){
 	if(PF_COUNT_MODE_) return 0;
 	return Eb;
 	//return Eb/100;
 }
 
 template<class MyDouble>
-double PartitionFunctionD2<MyDouble>::auPenalty_new(int i, int j){
+inline double PartitionFunctionD2<MyDouble>::auPenalty_new(int i, int j){
 	if(PF_COUNT_MODE_) return 0;
 	return auPenalty(i,j);
 	//return auPenalty(i,j)/100;
 }
 
 template<class MyDouble>
-MyDouble PartitionFunctionD2<MyDouble>::f(int j, int h, int l){
+inline MyDouble PartitionFunctionD2<MyDouble>::f(int j, int h, int l){
 	//if(j - 1 == l || PF_COUNT_MODE_ || NO_DANGLE_MODE_)//TODO: if(j - 1 == l)
 	if(PF_COUNT_MODE_ || NO_DANGLE_MODE_)//New: please confirm it
 	return MyDouble(1.0);
