@@ -618,8 +618,12 @@ static void handleD2PartitionFunction(){
 		computeD2PartitionFunction< PartitionFunctionD2< AdvancedDouble_Native > >(pf_d2);
 	}
 	else if( PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==2 ){
-		PartitionFunctionD2<AdvancedDouble_BigNum> pf_d2;
-		computeD2PartitionFunction< PartitionFunctionD2< AdvancedDouble_BigNum > >(pf_d2);
+		//PartitionFunctionD2<AdvancedDouble_BigNum> pf_d2;
+		//computeD2PartitionFunction< PartitionFunctionD2< AdvancedDouble_BigNum > >(pf_d2);
+		PartitionFunctionD2<AdvancedDouble_BigNumOptimized> pf_d2;
+		computeD2PartitionFunction< PartitionFunctionD2< AdvancedDouble_BigNumOptimized > >(pf_d2);
+		
+
 	}
 	else if( PF_ST_D2_ADVANCED_DOUBLE_SPECIFIER==3 ){
 		PartitionFunctionD2<AdvancedDouble_Hybrid> pf_d2;
