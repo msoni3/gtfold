@@ -33,12 +33,12 @@ class AdvancedDouble_Native{
 		~AdvancedDouble_Native(){
 			//deallocate();
 		}
-		//bool isInitialized(){
-		//      return true;
-		//}
+		/*bool isInitialized(){
+		      return true;
+		}
 		void reset(){
 			value=0.0;
-		}
+		}*/
 		void print()const{
 			printf("%f", value);
 		}
@@ -72,7 +72,7 @@ class AdvancedDouble_Native{
 		AdvancedDouble_Native operator/(const double &obj1_double) const {
 			return (AdvancedDouble_Native)(value/obj1_double);
 		}
-		int compare(const AdvancedDouble_Native &obj1) const{
+		/*int compare(const AdvancedDouble_Native &obj1) const{
 			double cmp = value-obj1.value;
 			if(cmp>0) return 1;
 			else if(cmp<0) return -1;
@@ -120,7 +120,45 @@ class AdvancedDouble_Native{
                 }
                 bool operator>=(const double &obj1) const {
                         return compare(obj1)>=0;
+                }*/
+
+		bool operator==(const AdvancedDouble_Native &obj1) const {
+                        return value==obj1.value;
                 }
+                bool operator==(const double &obj1) const {
+                        return value==obj1;
+                }
+                bool operator!=(const AdvancedDouble_Native &obj1) const {
+                        return value!=obj1.value;
+                }
+                bool operator!=(const double &obj1) const {
+                        return value!=obj1;
+                }
+                bool operator<(const AdvancedDouble_Native &obj1) const {
+                        return value<obj1.value;
+                }
+                bool operator<(const double &obj1) const {
+                        return value<obj1;
+                }
+                bool operator>(const AdvancedDouble_Native &obj1) const {
+                        return value>obj1.value;
+                }
+                bool operator>(const double &obj1) const {
+                        return value>obj1;
+                }
+                bool operator<=(const AdvancedDouble_Native &obj1) const {
+                        return value<=obj1.value;
+                }
+                bool operator<=(const double &obj1) const {
+                        return value<=obj1;
+                }
+                bool operator>=(const AdvancedDouble_Native &obj1) const {
+                        return value>=obj1.value;
+                }
+                bool operator>=(const double &obj1) const {
+                        return value>=obj1;
+                }
+
 		AdvancedDouble_Native& operator=(const AdvancedDouble_Native &obj1) {
 			if(this==&obj1) return *this;
 			//if(isInitialized())this->deallocate();//TODO
@@ -134,7 +172,6 @@ class AdvancedDouble_Native{
 			value=obj1;
 			return *this;
 		}
-
 };
 
 class AdvancedDouble_BigNum{
