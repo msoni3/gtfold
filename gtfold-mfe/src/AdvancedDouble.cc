@@ -349,29 +349,21 @@ class AdvancedDouble_BigNumOptimized{
 		mpf_t bigValue;
 	public:
 		AdvancedDouble_BigNumOptimized(){
-			//bigValue=0;
-			//createBigNum();
 			mpf_init2(bigValue,g_bignumprecision);
 		}
 		AdvancedDouble_BigNumOptimized(mpf_t val2){
-			//bigValue=0;
-			//createBigNum(val2);
 			mpf_init_set(bigValue, val2);
 		}
 		AdvancedDouble_BigNumOptimized(double val){
-			//bigValue=0;
-			//createBigNum(val);
 			mpf_init_set_d(bigValue, val);
 		}
 		AdvancedDouble_BigNumOptimized(const AdvancedDouble_BigNumOptimized &obj1) {
-			//bigValue=0;
-			//createBigNum(*(obj1.bigValue));
 			mpf_init_set(bigValue, obj1.bigValue);
 		}
 		void init(){
-			//bigValue=0;
-			createBigNum();
+			mpf_init2(bigValue,g_bignumprecision);
 		}
+		/*
 		void createBigNum(){
 			//if(bigValue==0){
 			//	bigValue = new mpf_t[1];
@@ -383,27 +375,23 @@ class AdvancedDouble_BigNumOptimized{
 			mpf_set(bigValue, val2);
 		}
 		void createBigNum(double val2){
-			//mpf_t op2; mpf_init2(op2,g_bignumprecision); mpf_set_d(op2, val2);
-			//createBigNum(op2);
-			//mpf_clear(op2);
-			
-			//mpf_clear(bigValue);
 			mpf_init2(bigValue,g_bignumprecision); mpf_set_d(bigValue, val2);
-		}
+		}*/
 		void deallocate(){
-			//if(bigValue!=0){mpf_clear(*bigValue); delete(bigValue); bigValue=0;}
 			mpf_clear(bigValue);
 		}
 		~AdvancedDouble_BigNumOptimized(){
-			deallocate();
+			//deallocate();
+			mpf_clear(bigValue);
 		}
+		/*
 		bool isInitialized(){
 			if(bigValue!=0) return true;
 			return false;
 		}
 		void reset(){
 			mpf_clear(bigValue);
-		}
+		}*/
 		void print()const{
 			//if(bigValue!=0) gmp_printf("mpf %.*Ff", PRINT_DIGITS_AFTER_DECIMAL, *bigValue);
 			gmp_printf("mpf %.*Ff", PRINT_DIGITS_AFTER_DECIMAL, bigValue);
@@ -418,53 +406,41 @@ class AdvancedDouble_BigNumOptimized{
 		}
 		AdvancedDouble_BigNumOptimized operator*(const AdvancedDouble_BigNumOptimized &obj1) const {
 			AdvancedDouble_BigNumOptimized res;
-			//res.createBigNum();
 			mpf_mul(res.bigValue,this->bigValue, obj1.bigValue);
 			return res;
 		}
 		AdvancedDouble_BigNumOptimized operator*(const double &obj1_double) const {
-			//const AdvancedDouble_BigNumOptimized obj1(obj1_double);
 			AdvancedDouble_BigNumOptimized res(obj1_double);
-			//res.createBigNum();
 			mpf_mul(res.bigValue,this->bigValue, res.bigValue);
 			return res;
 		}
 		AdvancedDouble_BigNumOptimized operator+(const AdvancedDouble_BigNumOptimized &obj1) const {
 			AdvancedDouble_BigNumOptimized res;
-			//res.createBigNum();
 			mpf_add(res.bigValue,this->bigValue, obj1.bigValue);
 			return res;
 		}
 		AdvancedDouble_BigNumOptimized operator+(const double &obj1_double) const {
-			//const AdvancedDouble_BigNumOptimized obj1(obj1_double);
 			AdvancedDouble_BigNumOptimized res(obj1_double);
-			//res.createBigNum();
 			mpf_add(res.bigValue,this->bigValue, res.bigValue);
 			return res;
 		}
 		AdvancedDouble_BigNumOptimized operator-(const AdvancedDouble_BigNumOptimized &obj1) const {
 			AdvancedDouble_BigNumOptimized res;
-			//res.createBigNum();
 			mpf_sub(res.bigValue,this->bigValue, obj1.bigValue);
 			return res;
 		}
 		AdvancedDouble_BigNumOptimized operator-(const double &obj1_double) const {
-			//const AdvancedDouble_BigNumOptimized obj1(obj1_double);
 			AdvancedDouble_BigNumOptimized res(obj1_double);
-			//res.createBigNum();
 			mpf_sub(res.bigValue,this->bigValue, res.bigValue);
 			return res;
 		}
 		AdvancedDouble_BigNumOptimized operator/(const AdvancedDouble_BigNumOptimized &obj1) const {
 			AdvancedDouble_BigNumOptimized res;
-			//res.createBigNum();
 			mpf_div(res.bigValue,this->bigValue, obj1.bigValue);
 			return res;
 		}
 		AdvancedDouble_BigNumOptimized operator/(const double &obj1_double) const {
-			//const AdvancedDouble_BigNumOptimized obj1(obj1_double);
 			AdvancedDouble_BigNumOptimized res(obj1_double);
-			//res.createBigNum();
 			mpf_div(res.bigValue,this->bigValue, res.bigValue);
 			return res;
 		}
