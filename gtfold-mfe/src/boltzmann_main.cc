@@ -179,7 +179,7 @@ static void print_examples_developer_options(){
 	printf("1. Calculate Partition function:\n\n");
 	printf("gtboltzmann [--partition] [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] [--scale DOUBLE] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
 	printf("2. Sample structures stochastically:\n\n");
-	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--scale DOUBLE] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
+	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] [-t n] [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--scale DOUBLE] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
 	printf("gtboltzmann -s INT [[-d 0|2]|[-dS]] -t 1 [-o outputPrefix] [--exactintloop] [-v] [--groupbyfreq] [--sampleenergy DOUBLE] [-e] [--checkfraction] [--estimatebpp] [--parallelsample] [-p DIR] [-w DIR] [-l] [--scale DOUBLE] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
 	printf("gtboltzmann -s INT --separatectfiles [--ctfilesdir dump_dir_path] [--summaryfile dump_summery_file_name] [-d 2] [--exactintloop] [-v] [-p DIR] [-w DIR] [-l] [--scale DOUBLE] [--advancedouble INT] [--bignumprecision INT] <seq_file>\n\n");
 	printf("\n\n");
