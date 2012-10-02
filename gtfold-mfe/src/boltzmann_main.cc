@@ -646,7 +646,8 @@ static void computeD2PartitionFunction(T pf_d2){
 	//PartitionFunctionD2<AdvancedDouble> pf_d2;
 	pf_d2.calculate_partition(seq.length(),pf_count_mode,no_dangle_mode,PF_D2_UP_APPROX_ENABLED,scaleFactor);
 	t1 = get_seconds() - t1;
-	printf("partition function computation running time: %9.6f seconds\n", t1);
+	//printf("partition function computation running time: %9.6f seconds\n", t1);
+	printf("partition function computation running time: %f seconds\n", t1);
 	//calculate_partition(seq.length(),0,0);
 	if(PF_PRINT_ARRAYS_ENABLED) pf_d2.printAllMatrixesToFile(pfArraysOutFile);
 	pf_d2.free_partition();
@@ -682,7 +683,8 @@ static void computeD2Sample(T st_d2){
 	t1 = get_seconds();
 	st_d2.initialize(seq.length(), pf_count_mode, no_dangle_mode, print_energy_decompose, PF_D2_UP_APPROX_ENABLED,ST_D2_ENABLE_CHECK_FRACTION, energyDecomposeOutFile,scaleFactor);
 	t1 = get_seconds() - t1;
-	printf("D2 Traceback initialization (partition function computation) running time: %9.6f seconds\n", t1);
+	//printf("D2 Traceback initialization (partition function computation) running time: %9.6f seconds\n", t1);
+	printf("D2 Traceback initialization (partition function computation) running time: %f seconds\n", t1);
 	t1 = get_seconds();
 	if(DUMP_CT_FILE==false){
 		if(ST_D2_ENABLE_COUNTS_PARALLELIZATION && g_nthreads!=1)
@@ -691,7 +693,8 @@ static void computeD2Sample(T st_d2){
 	}
 	else  st_d2.batch_sample_and_dump(num_rnd, ctFileDumpDir, stochastic_summery_file_name, seq, seqfile);
 	t1 = get_seconds() - t1;
-	printf("D2 Traceback computation running time: %9.6f seconds\n", t1);
+	//printf("D2 Traceback computation running time: %9.6f seconds\n", t1);
+	printf("D2 Traceback computation running time: %f seconds\n", t1);
 	if(PF_PRINT_ARRAYS_ENABLED) st_d2.printPfMatrixesToFile(pfArraysOutFile);
 	st_d2.free_traceback();
 }
