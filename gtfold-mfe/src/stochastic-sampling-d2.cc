@@ -472,9 +472,9 @@ void StochasticTracebackD2<MyDouble>::rnd_u1(int i, int j, int* structure, doubl
 				fraction.add(5, h, j, true);
 				fraction.add(6, i, j, false);
 			}
-			double e2 = (pf_d2.EC_new()) + (h-i)*(pf_d2.EB_new());
+			double e2 = (pf_d2.EB_new()) + (h-i)*(pf_d2.EC_new());
 			if (print_energy_decompose == 1){ 
-				fprintf(energy_decompose_outfile, "(pf_d2.EC_new())=%f (h-i)*(pf_d2.EB_new())=%f\n",(pf_d2.EC_new())/100.0, (h-i)*(pf_d2.EB_new())/100.0);
+				fprintf(energy_decompose_outfile, "(pf_d2.EB_new())=%f (h-i)*(pf_d2.EC_new())=%f\n",(pf_d2.EB_new())/100.0, (h-i)*(pf_d2.EC_new())/100.0);
 				fprintf(energy_decompose_outfile, "U1_s3_ihj(%d %d %d) %lf\n",i,h,j, e2/100.0);
 			}
 			energy += e2;
@@ -531,9 +531,9 @@ void StochasticTracebackD2<MyDouble>::rnd_s3_mb(int i, int h, int l, int j, int*
 			fraction.add(6, l+1, j, false);
 		}
 		double tt =  0;//(j == l)? 0 : (pf_d2.ED3_new(h,l,l+1));//this term is corresponding to f(j+1,h,l)
-		double e2 = tt + (j-l)*(pf_d2.EB_new());
+		double e2 = tt + (j-l)*(pf_d2.EC_new());
 		if (print_energy_decompose == 1){
-			fprintf(energy_decompose_outfile, "j=%d,l=%d,tt=(j == l)?0:(pf_d2.ED3_new(h,l,l+1))=%f,(j-l)*(pf_d2.EB_new())=%f\n",j,l,tt/100.0,(j-l)*(pf_d2.EB_new())/100.0);
+			fprintf(energy_decompose_outfile, "j=%d,l=%d,tt=(j == l)?0:(pf_d2.ED3_new(h,l,l+1))=%f,(j-l)*(pf_d2.EC_new())=%f\n",j,l,tt/100.0,(j-l)*(pf_d2.EC_new())/100.0);
 			fprintf(energy_decompose_outfile, "S3_MB_ihlj(%d %d %d %d) %lf\n",i,h,l,j, e2/100.0);
 		}
 		energy += e2;
@@ -568,13 +568,13 @@ void StochasticTracebackD2<MyDouble>::rnd_upm(int i, int j, int* structure, doub
 				fraction.add(4, h, j, true);
 				fraction.add(3, i, j, false);
 			}
-			double e2 = (pf_d2.EA_new()) + 2*(pf_d2.EC_new()) + (h-i-1)*(pf_d2.EB_new()) + (pf_d2.auPenalty_new(i,j)) + (pf_d2.ED5_new(j,i,j-1)) + (pf_d2.ED3_new(j,i,i+1));//TODO Old impl using ed3(j,i) instead of ed3(i,j)
+			double e2 = (pf_d2.EA_new()) + 2*(pf_d2.EB_new()) + (h-i-1)*(pf_d2.EC_new()) + (pf_d2.auPenalty_new(i,j)) + (pf_d2.ED5_new(j,i,j-1)) + (pf_d2.ED3_new(j,i,i+1));//TODO Old impl using ed3(j,i) instead of ed3(i,j)
 			//double e2 = (pf_d2.EA_new()) + 2*(pf_d2.EC_new()) + (h-i-1)*(pf_d2.EB_new()) + (pf_d2.auPenalty_new(i,j)) + (pf_d2.ED5_new(i,j,j-1)) + (pf_d2.ED3_new(i,j,i+1));//TODO New impl using ed3(i,j( instead of ed3(j,i)
 			energy += e2;
 			h1 = h;
 			if (print_energy_decompose == 1) {
 				fprintf(energy_decompose_outfile, "(pf_d2.EA_new())=%f, (pf_d2.EC_new())=%f, (pf_d2.EB_new())=%f\n",(pf_d2.EA_new())/100.0, (pf_d2.EC_new())/100.0, (pf_d2.EB_new())/100.0);
-				fprintf(energy_decompose_outfile, "(pf_d2.EA_new()) + 2*(pf_d2.EC_new()) + (h-i-1)*(pf_d2.EB_new())=%f, (pf_d2.auPenalty_new(i,j))=%f, (pf_d2.ED5_new(j,i,j-1))=%f, (pf_d2.ED3_new(j,i,i+1))=%f\n",((pf_d2.EA_new()) + 2*(pf_d2.EC_new()) + (h-i-1)*(pf_d2.EB_new()))/100.0, (pf_d2.auPenalty_new(i,j))/100.0, (pf_d2.ED5_new(j,i,j-1))/100.0, (pf_d2.ED3_new(j,i,i+1))/100.0);
+				fprintf(energy_decompose_outfile, "(pf_d2.EA_new()) + 2*(pf_d2.EB_new()) + (h-i-1)*(pf_d2.EC_new())=%f, (pf_d2.auPenalty_new(i,j))=%f, (pf_d2.ED5_new(j,i,j-1))=%f, (pf_d2.ED3_new(j,i,i+1))=%f\n",((pf_d2.EA_new()) + 2*(pf_d2.EB_new()) + (h-i-1)*(pf_d2.EC_new()))/100.0, (pf_d2.auPenalty_new(i,j))/100.0, (pf_d2.ED5_new(j,i,j-1))/100.0, (pf_d2.ED3_new(j,i,i+1))/100.0);
 				fprintf(energy_decompose_outfile, "%s(%d %d %d) %lf\n", "UPM_S2_ihj",i,h1,j,e2/100.0);
 			}
 			rnd_s2(i,h1,j, structure, energy, g_stack);
