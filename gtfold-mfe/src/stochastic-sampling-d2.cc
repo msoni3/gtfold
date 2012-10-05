@@ -112,7 +112,7 @@ MyDouble StochasticTracebackD2<MyDouble>::Q_BI_ihlj(int i, int h, int l, int j){
 template <class MyDouble>
 MyDouble StochasticTracebackD2<MyDouble>::UPM_S2_ihj(int i, int h, int j){
 	//return (pf_d2.get_s2(h,j)) * (pf_d2.myExp(-((pf_d2.EA_new())+ 2*(pf_d2.EC_new()) + (h-i-1)*(pf_d2.EB_new()) + (pf_d2.auPenalty_new(i,j)) + (pf_d2.ED5_new(j,i,j-1)) + (pf_d2.ED3_new(j,i,i+1)))/RT)) / (pf_d2.get_upm(i,j)); //TODO: Old impl, using ed3(j,i) instead of ed3(i,j), similarly in ed5
-	return (pf_d2.get_s2(h,j)) * (pf_d2.myExp(-((pf_d2.EA_new())+ 2*(pf_d2.EC_new()) + (h-i-1)*(pf_d2.EB_new()) + (pf_d2.auPenalty_new(i,j)) + (pf_d2.ED5_new(j,i,j-1)) + (pf_d2.ED3_new(j,i,i+1))-pf_d2.get_M_RT()*(h-i))/RT)) / (pf_d2.get_upm(i,j)); //TODO: Old impl, using ed3(j,i) instead of ed3(i,j), similarly in ed5
+	return (pf_d2.get_s2(h,j)) * (pf_d2.myExp(-((pf_d2.EA_new())+ 2*(pf_d2.EB_new()) + (h-i-1)*(pf_d2.EC_new()) + (pf_d2.auPenalty_new(i,j)) + (pf_d2.ED5_new(j,i,j-1)) + (pf_d2.ED3_new(j,i,i+1))-pf_d2.get_M_RT()*(h-i))/RT)) / (pf_d2.get_upm(i,j)); //TODO: Old impl, using ed3(j,i) instead of ed3(i,j), similarly in ed5
 	//return (pf_d2.get_s2(h,j)) * (pf_d2.myExp(-((pf_d2.EA_new())+ 2*(pf_d2.EC_new()) + (h-i-1)*(pf_d2.EB_new()) + (pf_d2.auPenalty_new(i,j)) + (pf_d2.ED5_new(i,j,j-1)) + (pf_d2.ED3_new(i,j,i+1)))/RT)) / (pf_d2.get_upm(i,j)); //TODO: New impl, using ed3(i,j) instead of ed3(j,i), similarly in ed5
 	//return exp((-1)*ED3_new(j,i,i+1)/RT)* (s2[h][j] * exp((-1)*(EA_new()+2*EC_new()+(h-i-1)*EB_new())/RT))/upm[i][j];//TODO: New impl
 }
@@ -133,7 +133,7 @@ MyDouble StochasticTracebackD2<MyDouble>::U1_s3_ihj(int i, int h, int j){
 template <class MyDouble>
 MyDouble StochasticTracebackD2<MyDouble>::S3_ihlj(int i, int h, int l, int j){
 	//return feasible(h,l) ? (pf_d2.get_up(h,l)) * (pf_d2.myExp(-((pf_d2.auPenalty_new(h,l)) + (pf_d2.ED5_new(h,l,h-1)) + (pf_d2.ED3_new(h,l,l+1)))/RT)) * ( (pf_d2.myExp(-(j-l)*(pf_d2.EB_new())/RT)) * (pf_d2.f(j+1,h,l)) + (pf_d2.get_u1(l+1,j)) ) / (pf_d2.get_s3(h,j)) : MyDouble(0.0);
-	return feasible(h,l) ? (pf_d2.get_up(h,l)) * (pf_d2.myExp(-((pf_d2.auPenalty_new(h,l)) + (pf_d2.ED5_new(h,l,h-1)) + (pf_d2.ED3_new(h,l,l+1)))/RT)) * ( (pf_d2.myExp(-(j-l)*(pf_d2.EB_new()-pf_d2.get_M_RT())/RT)) * (pf_d2.f(j+1,h,l)) + (pf_d2.get_u1(l+1,j)) ) / (pf_d2.get_s3(h,j)) : MyDouble(0.0);
+	return feasible(h,l) ? (pf_d2.get_up(h,l)) * (pf_d2.myExp(-((pf_d2.auPenalty_new(h,l)) + (pf_d2.ED5_new(h,l,h-1)) + (pf_d2.ED3_new(h,l,l+1)))/RT)) * ( (pf_d2.myExp(-(j-l)*(pf_d2.EC_new()-pf_d2.get_M_RT())/RT)) * (pf_d2.f(j+1,h,l)) + (pf_d2.get_u1(l+1,j)) ) / (pf_d2.get_s3(h,j)) : MyDouble(0.0);
 }
 
 template <class MyDouble>
