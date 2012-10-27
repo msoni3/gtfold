@@ -948,7 +948,8 @@ void StochasticTracebackD2<MyDouble>::batch_sample(int num_rnd, bool ST_D2_ENABL
 	  printf("D2 Exact UP partition function computation running time: %9.6f seconds\n", t1);
 	  }
 	  else U = pf_d2.get_u(1,length);*/
-	U = pf_d2.get_u(1,length);
+	//U = pf_d2.get_u(1,length);
+	U = pf_d2.unscale(1,length,pf_d2.get_u(1,length));
 	srand(time(NULL));
 
 	int threads_for_one_sample = 1;
@@ -1149,7 +1150,8 @@ void StochasticTracebackD2<MyDouble>::batch_sample_parallel(int num_rnd, bool ST
 	  }
 	  else U = pf_d2.get_u(1,length);
 	 */
-	U = pf_d2.get_u(1,length);
+	//U = pf_d2.get_u(1,length);
+	U = pf_d2.unscale(1,length,pf_d2.get_u(1,length));
 
 	srand(time(NULL));
 	/*
