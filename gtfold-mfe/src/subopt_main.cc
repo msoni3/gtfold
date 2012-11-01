@@ -25,6 +25,7 @@ static string outputDir = "";
 static string paramDir = "";
 static bool PARAM_DIR = false;
 static int is_check_for_duplicates_enabled = 0;//TODO Default value need to be confirmed with Shel
+static int max_structure_count = -1;//User can optionally use --maxcount max_structure_count to restrict program to generate only that many structure and quits after that 
 static void help();
 static void detailed_help();
 static void printRunConfiguration(string seq);
@@ -87,18 +88,15 @@ void parse_options(int argc, char** argv) {
           outputDir = argv[++i];
         else
           help();
-      }
-      else if(strcmp(argv[i], "--delta") == 0) {
+      } else if(strcmp(argv[i], "--delta") == 0) {
         g_dangles = 2;
         if(i < argc)
           suboptDelta = atof(argv[++i]);
         else
           help();
-      }
-      else if(strcmp(argv[i], "-o") == 0) {
+      } else if(strcmp(argv[i], "-o") == 0) {
 		outputPrefix.assign(argv[++i]);
-      }
-      else if (strcmp(argv[i], "--dangle") == 0 || strcmp(argv[i], "-d") == 0) {
+      } else if (strcmp(argv[i], "--dangle") == 0 || strcmp(argv[i], "-d") == 0) {
         std::string cmd = argv[i];
 	if(i < argc) {
           g_dangles = atoi(argv[++i]);
@@ -108,7 +106,16 @@ void parse_options(int argc, char** argv) {
           }
         } else
           help();
-      }  
+      } else if (strcmp(argv[i], "--maxcount") == 0) {
+	if(i+1 < argc) {
+          max_structure_count = atoi(argv[++i]);
+          if (max_structure_count < 0) {
+            max_structure_count = -1;
+            printf("Ignoring --maxcount option as it accepts only positive numbers and program will continue with maxcount value as -1 which means there is no restriction on maximum count of structures\n");
+          }
+        } else
+          help();
+      }
     } else {
       seqfile = argv[i];
     }
@@ -185,12 +192,13 @@ static void print_usage() {
     printf("   -w, --workdir DIR    Path of directory where output files will be written.\n");
     printf("   -v, --verbose        Run in verbose mode.\n");
     printf("   --duplicatecheck	    Enable the check if duplicate structure is coming or not, if duplicate is coming then warn the user and exits. By default this option will switched off. This option will slowdown program as well as consume more memory because of need to storing all structures.\n");
+    printf("   --maxcount INT	    Optional option '--maxcount max_structure_count' to restrict program to generate only that many structure and quits after that. By default there is no maximum limit\n");
 }
 
 static void print_examples(){
         printf("\n\nEXAMPLES:\n\n");
         printf("1. Calculate Suboptimal Structures:\n");
-        printf("gtsubopt --delta DOUBLE [-d 2] [-o outputPrefix] [--duplicatecheck] [-v] [-w DIR] [-p DIR] <seq_file>\n\n");
+        printf("gtsubopt --delta DOUBLE [-d 2] [-o outputPrefix] [--duplicatecheck] [--maxcount INT] [-v] [-w DIR] [-p DIR] <seq_file>\n\n");
         printf("\n\n");
 }
 
@@ -225,7 +233,7 @@ void subopt_main(int argc, char** argv) {
   write_header_subopt_file(suboptFile, seq, energy);	
   
   double t1 = get_seconds();
-  ss_map_t subopt_data = subopt_traceback(seq.length(), 100.0*suboptDelta, suboptFile, is_check_for_duplicates_enabled);
+  ss_map_t subopt_data = subopt_traceback(seq.length(), 100.0*suboptDelta, suboptFile, is_check_for_duplicates_enabled, max_structure_count);
   t1 = get_seconds() - t1;
   
   //printf("- thermodynamic parameters: %s\n", EN_DATADIR.c_str());

@@ -99,7 +99,7 @@ void calculate_fm() {
 
 #endif
 
-void process(ss_map_t& subopt_data, int len, string suboptFile, int is_check_for_duplicates_enabled) {
+void process(ss_map_t& subopt_data, int len, string suboptFile, int is_check_for_duplicates_enabled, int max_structure_count) {
 	ofstream outfile;
         outfile.open(suboptFile.c_str(), ios::out | ios::app);
         char buff[4096];
@@ -139,6 +139,7 @@ void process(ss_map_t& subopt_data, int len, string suboptFile, int is_check_for
                         //cout << ps.str << endl;
 			sprintf(buff,"%d\t%s\t%6.2f", count, (ps.str).c_str(), (ps.ae_)/100.0);
 			outfile << buff << std::endl;
+			if(max_structure_count>0 && count>=max_structure_count) break;//exit
                         continue;
                 }	
                 else {
@@ -164,7 +165,7 @@ void process(ss_map_t& subopt_data, int len, string suboptFile, int is_check_for
 #endif
 }
 
-ss_map_t subopt_traceback(int len, int _delta, string suboptFile, int is_check_for_duplicates_enabled) {
+ss_map_t subopt_traceback(int len, int _delta, string suboptFile, int is_check_for_duplicates_enabled, int max_structure_count) {
         trace_func[0] = traceW;
         trace_func[1] = traceV;
         trace_func[2] = traceVBI;
@@ -181,7 +182,7 @@ ss_map_t subopt_traceback(int len, int _delta, string suboptFile, int is_check_f
         length = len;
 
         ss_map_t subopt_data;
-        process(subopt_data, len, suboptFile, is_check_for_duplicates_enabled);
+        process(subopt_data, len, suboptFile, is_check_for_duplicates_enabled, max_structure_count);
 
         return subopt_data;
 }
