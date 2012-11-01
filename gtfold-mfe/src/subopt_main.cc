@@ -24,6 +24,7 @@ static string outputFile = "";
 static string outputDir = "";
 static string paramDir = "";
 static bool PARAM_DIR = false;
+static int is_check_for_duplicates_enabled = 0;//TODO Default value need to be confirmed with Shel
 static void help();
 static void detailed_help();
 static void printRunConfiguration(string seq);
@@ -47,6 +48,18 @@ void save_subopt_file(string outputFile, ss_map_t& ss_data,
 	outfile.close();
 }
 
+static void write_header_subopt_file(string outputFile, const string& seq, int energy)
+{
+	ofstream outfile;
+	outfile.open(outputFile.c_str());
+	char buff[4096];
+
+	sprintf(buff,"count\t%s\t%6.2f", seq.c_str(), energy/100.0);
+	outfile << buff << std::endl;
+
+	outfile.close();
+}
+
 void parse_options(int argc, char** argv) {
   int i;
   g_dangles = 2;
@@ -58,6 +71,8 @@ void parse_options(int argc, char** argv) {
         help(); 
       } else if(strcmp(argv[i], "--detailedhelp") == 0 ) {
 	detailed_help();
+      } else if(strcmp(argv[i], "--duplicatecheck") == 0 ) {
+	is_check_for_duplicates_enabled = 1;
       } else if (strcmp(argv[i], "--paramdir") == 0 || 
           strcmp(argv[i], "-p") == 0) {
         if(i < argc) {
@@ -169,12 +184,13 @@ static void print_usage() {
     printf("   --detailedhelp      Output help (this message) with detailed options and examples, and exit.\n");
     printf("   -w, --workdir DIR    Path of directory where output files will be written.\n");
     printf("   -v, --verbose        Run in verbose mode.\n");
+    printf("   --duplicatecheck	    Enable the check if duplicate structure is coming or not, if duplicate is coming then warn the user and exits. By default this option will switched off. This option will slowdown program as well as consume more memory because of need to storing all structures.\n");
 }
 
 static void print_examples(){
         printf("\n\nEXAMPLES:\n\n");
         printf("1. Calculate Suboptimal Structures:\n");
-        printf("gtsubopt --delta DOUBLE [-d 2] [-o outputPrefix] [-v] [-w DIR] [-p DIR] <seq_file>\n\n");
+        printf("gtsubopt --delta DOUBLE [-d 2] [-o outputPrefix] [--duplicatecheck] [-v] [-w DIR] [-p DIR] <seq_file>\n\n");
         printf("\n\n");
 }
 
@@ -206,9 +222,10 @@ void subopt_main(int argc, char** argv) {
   printRunConfiguration(seq);
 
   int energy = calculate(seq.length()) ; 
+  write_header_subopt_file(suboptFile, seq, energy);	
   
   double t1 = get_seconds();
-  ss_map_t subopt_data = subopt_traceback(seq.length(), 100.0*suboptDelta);
+  ss_map_t subopt_data = subopt_traceback(seq.length(), 100.0*suboptDelta, suboptFile, is_check_for_duplicates_enabled);
   t1 = get_seconds() - t1;
   
   //printf("- thermodynamic parameters: %s\n", EN_DATADIR.c_str());
@@ -218,7 +235,7 @@ void subopt_main(int argc, char** argv) {
   printf("Subopt traceback running time: %9.6f seconds\n", t1);
 
   printf("Subopt structures saved in %s\n", suboptFile.c_str());
-  save_subopt_file(suboptFile, subopt_data, seq, energy);	
+  //save_subopt_file(suboptFile, subopt_data, seq, energy);	
 
   //printf("+ calculating suboptimal structures within %f kcal/mol of MFE\n", suboptDelta);
   //printf("+ suboptimal structures file: %s\n", suboptFile.c_str());
@@ -241,6 +258,7 @@ static void printRunConfiguration(string seq) {
         if(!SILENT) printf("- sequence length: %d\n", (int)seq.length());
 	if(!SILENT) printf("+ calculating suboptimal structures within %f kcal/mol of MFE\n", suboptDelta);
 	if(!SILENT) printf("+ suboptimal structures file: %s\n", suboptFile.c_str());
+	if(!SILENT) printf("+ is_check_for_duplicates_enabled: %d\n", is_check_for_duplicates_enabled);
         //printf("- output file: %s\n", outputFile.c_str());
 	printf("\n");
 }
