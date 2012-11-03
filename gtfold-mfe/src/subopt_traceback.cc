@@ -159,6 +159,7 @@ void process(ss_map_t& subopt_data, int len, string suboptFile, int is_check_for
                 }
         }
         outfile.close();
+        printf("Counts of structure generated=%d\n", count);
 
 #ifdef DEBUG 
         //printf("# SS = %d\n", count);
