@@ -9,7 +9,7 @@
 using namespace std;
 
 extern int g_bignumprecision;
-const int PRINT_DIGITS_AFTER_DECIMAL = 10;
+const int PRINT_DIGITS_AFTER_DECIMAL = 20;
 
 class AdvancedDouble_Native{
 	private:
@@ -40,13 +40,15 @@ class AdvancedDouble_Native{
 			value=0.0;
 		}*/
 		void print()const{
-			printf("%f", value);
+			//printf("%f", value);
+			printf("%.20f", value);
 		}
 		void printInt()const{
 			printf("%d", (int)(value));
 		}
 		void print(FILE* outFile)const{
-			fprintf(outFile, "%f", value);
+			//fprintf(outFile, "%f", value);
+			fprintf(outFile, "%.20f", value);
 		}
 		AdvancedDouble_Native operator*(const AdvancedDouble_Native &obj1) const {
 			return (AdvancedDouble_Native)(value*obj1.value);
