@@ -364,8 +364,8 @@ template<class MyDouble>
 inline double PartitionFunctionD2<MyDouble>::ED3_new(int i, int j, int k){
 	if(NO_DANGLE_MODE_) return 0;
 	if(PF_COUNT_MODE_) return 0;
-	//if(k > part_len) return 0;//This is to take care of round robin way of d2, this is shel's suggestion and rnafold also seems to follow this
-	if(k > part_len) k=1;//This is to take care of round robin way of d2, rnascoring code follows this means, you need to do this in case you want to pass scoring test
+	if(k > part_len) return 0;//This is to take care of round robin way of d2, this is shel's suggestion and rnafold also seems to follow this
+	//if(k > part_len) k=1;//This is to take care of round robin way of d2, rnascoring code follows this means, you need to do this in case you want to pass scoring test
 	return Ed5(j,i,k);
 	//return Ed5(j,i,k)/100;
 }
@@ -374,8 +374,8 @@ template<class MyDouble>
 inline double PartitionFunctionD2<MyDouble>::ED5_new(int i, int j, int k){
 	if(NO_DANGLE_MODE_) return 0;
 	if(PF_COUNT_MODE_) return 0;
-	//if (k<1) return 0;//This is to take care of round robin way of d2, this is shel's suggestion and rnafold also seems to follow this
-	if (k<1) k=part_len;//This is to take care of round robin way of d2, rnascoring code follows this means, you need to do this in case you want to pass scoring test
+	if (k<1) return 0;//This is to take care of round robin way of d2, this is shel's suggestion and rnafold also seems to follow this
+	//if (k<1) k=part_len;//This is to take care of round robin way of d2, rnascoring code follows this means, you need to do this in case you want to pass scoring test
 	return Ed3(j,i,k);
 	//return Ed3(j,i,k)/100;
 }
