@@ -11,7 +11,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
- */
+*/
 template<class MyDouble>
 class PartitionFunctionD2{
 	public:
@@ -93,6 +93,7 @@ class PartitionFunctionD2{
 		void printAllMatrixes();
 		void printAllMatrixesToFile(std::string pfArraysOutputFile);
 };
+
 
 //Now the definitions of all these method starts, earlier they were in separate C++ source file and then I needed to move them to header file only because of this
 //http://www.parashift.com/c%2B%2B-faq-lite/templates-defn-vs-decl.html
@@ -1144,5 +1145,5 @@ void printUPprobabilities(int i, int j){
 #ifdef __cplusplus
 }
 #endif
- */
+*/
 #endif
