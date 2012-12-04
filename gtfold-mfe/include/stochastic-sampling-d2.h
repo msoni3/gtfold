@@ -10,6 +10,7 @@
 #include "partition-func-d2.h"
 #include "energy.h"
 #include <math.h>
+#include <random>
 
 using namespace std;
 //#include "MyDouble.cc"
@@ -54,6 +55,7 @@ public:
 			}
 		};
 	private:		
+		std::mt19937 random_engine;
 		pf_shel_check fraction;
 		bool checkFraction;
 		bool PF_D2_UP_APPROX_ENABLED;
@@ -144,6 +146,7 @@ template <class MyDouble>
 void StochasticTracebackD2<MyDouble>::initialize(int length1, int PF_COUNT_MODE1, int NO_DANGLE_MODE1, int print_energy_decompose1, bool PF_D2_UP_APPROX_ENABLED1, bool checkFraction1, std::string energy_decompose_output_file, double scaleFactor){
 	checkFraction = checkFraction1;
 	length = length1;
+	random_engine.seed(time(NULL));
 	//if(checkFraction) fraction = pf_shel_check(length);
 	print_energy_decompose = print_energy_decompose1; 
 	if(print_energy_decompose==1){
@@ -177,7 +180,8 @@ void StochasticTracebackD2<MyDouble>::free_traceback(){
 template <class MyDouble>
 inline MyDouble StochasticTracebackD2<MyDouble>::randdouble()
 {
-	return MyDouble( rand()/(double(RAND_MAX)+1) );
+	return MyDouble( (double)(random_engine() - random_engine.min()) / (double)(random_engine.max() - random_engine.min()) );
+
 }
 
 template <class MyDouble>

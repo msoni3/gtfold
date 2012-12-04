@@ -96,6 +96,12 @@ if test "x$GXX" = "xyes"; then
   fi
 fi
 
+dnl hopefully this works every time?
+if test true; then
+   CFLAGS="$CFLAGS -std=c++0x"
+   CXXFLAGS="$CXXFLAGS -std=c++0x"
+fi
+
 dnl This is an example how to check for compiler characteristics that
 dnl are not a part of the standard Autoconf tests:
 
